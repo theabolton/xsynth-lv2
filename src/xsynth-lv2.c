@@ -30,6 +30,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <pthread.h>
+#include <math.h>
 
 #include <ladspa.h>
 #include "dssi.h"
@@ -45,9 +46,8 @@
 
 static LV2_Descriptor    *xsynth_LV2_descriptor = NULL;
 
-static void xsynth_cleanup(LADSPA_Handle instance);
-static void xsynth_run_synth(LADSPA_Handle instance, unsigned long sample_count,
-                             snd_seq_event_t *events, unsigned long event_count);
+static void xsynth_cleanup(LV2_Handle instance);
+static void xsynth_run_synth(LV2_Handle instance, uint32_t sample_count);
 
 /* ---- mutual exclusion ---- */
 
@@ -89,8 +89,9 @@ xsynth_voicelist_mutex_unlock(xsynth_synth_t *synth)
  *
  * implements LADSPA (*instantiate)()
  */
-static LADSPA_Handle
-xsynth_instantiate(const LADSPA_Descriptor *descriptor, unsigned long sample_rate)
+static LV2_Handle
+xsynth_instantiate(const LV2_Descriptor *descriptor, double sample_rate,
+                   const char *bundle_path, const LV2_Feature * const *features)
 {
     xsynth_synth_t *synth = (xsynth_synth_t *)calloc(1, sizeof(xsynth_synth_t));
     int i;
@@ -111,8 +112,8 @@ xsynth_instantiate(const LADSPA_Descriptor *descriptor, unsigned long sample_rat
     }
 
     /* do any per-instance one-time initialization here */
-    synth->sample_rate = sample_rate;
-    synth->deltat = 1.0f / (float)synth->sample_rate;
+    synth->sample_rate = lrint(sample_rate);
+    synth->deltat = 1.0f / (float)sample_rate;
     synth->polyphony = XSYNTH_DEFAULT_POLYPHONY;
     synth->voices = XSYNTH_DEFAULT_POLYPHONY;
     synth->monophonic = 0;
@@ -126,7 +127,7 @@ xsynth_instantiate(const LADSPA_Descriptor *descriptor, unsigned long sample_rat
     xsynth_data_friendly_patches(synth);
     xsynth_synth_init_controls(synth);
 
-    return (LADSPA_Handle)synth;
+    return (LV2_Handle)synth;
 }
 
 /*
@@ -135,7 +136,7 @@ xsynth_instantiate(const LADSPA_Descriptor *descriptor, unsigned long sample_rat
  * implements LADSPA (*connect_port)()
  */
 static void
-xsynth_connect_port(LADSPA_Handle instance, unsigned long port, LADSPA_Data *data)
+xsynth_connect_port(LV2_Handle instance, uint32_t port, void *data)
 {
     xsynth_synth_t *synth = (xsynth_synth_t *)instance;
 
@@ -185,7 +186,7 @@ xsynth_connect_port(LADSPA_Handle instance, unsigned long port, LADSPA_Data *dat
  * implements LADSPA (*activate)()
  */
 static void
-xsynth_activate(LADSPA_Handle instance)
+xsynth_activate(LV2_Handle instance)
 {
     xsynth_synth_t *synth = (xsynth_synth_t *)instance;
 
@@ -195,23 +196,12 @@ xsynth_activate(LADSPA_Handle instance)
 }
 
 /*
- * xsynth_ladspa_run_wrapper
- *
- * implements LADSPA (*run)() by calling xsynth_run_synth() with no events
- */
-static void
-xsynth_ladspa_run_wrapper(LADSPA_Handle instance, unsigned long sample_count)
-{
-    xsynth_run_synth(instance, sample_count, NULL, 0);
-}
-
-/*
  * xsynth_deactivate
  *
  * implements LADSPA (*deactivate)()
  */
 static void
-xsynth_deactivate(LADSPA_Handle instance)
+xsynth_deactivate(LV2_Handle instance)
 {
     xsynth_synth_t *synth = (xsynth_synth_t *)instance;
 
@@ -224,7 +214,7 @@ xsynth_deactivate(LADSPA_Handle instance)
  * implements LADSPA (*cleanup)()
  */
 static void
-xsynth_cleanup(LADSPA_Handle instance)
+xsynth_cleanup(LV2_Handle instance)
 {
     xsynth_synth_t *synth = (xsynth_synth_t *)instance;
     int i;
@@ -425,8 +415,7 @@ xsynth_handle_event(xsynth_synth_t *synth, snd_seq_event_t *event)
  * implements DSSI (*run_synth)()
  */
 static void
-xsynth_run_synth(LADSPA_Handle instance, unsigned long sample_count,
-                 snd_seq_event_t *events, unsigned long event_count)
+xsynth_run_synth(LV2_Handle instance, uint32_t sample_count)
 {
     xsynth_synth_t *synth = (xsynth_synth_t *)instance;
     unsigned long samples_done = 0;

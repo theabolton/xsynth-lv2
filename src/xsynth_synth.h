@@ -31,6 +31,7 @@
 #include <ladspa.h>
 #include "dssi.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 
 #include "xsynth.h"
 #include "xsynth_types.h"
@@ -122,6 +123,8 @@ struct _xsynth_synth_t {
     LADSPA_Data    *tuning;
     const LV2_Atom_Sequence
                    *events;
+
+    LV2_URID        MIDI_MidiEvent_URI;
 };
 
 void  xsynth_synth_all_voices_off(xsynth_synth_t *synth);

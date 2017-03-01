@@ -35,6 +35,9 @@
 #include <ladspa.h>
 #include "dssi.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 
 #include "xsynth_types.h"
 #include "xsynth.h"
@@ -93,9 +96,19 @@ static LV2_Handle
 xsynth_instantiate(const LV2_Descriptor *descriptor, double sample_rate,
                    const char *bundle_path, const LV2_Feature * const *features)
 {
-    xsynth_synth_t *synth = (xsynth_synth_t *)calloc(1, sizeof(xsynth_synth_t));
+    LV2_URID_Map *map = NULL;
+    xsynth_synth_t *synth;
     int i;
 
+    for (i = 0; features[i]; i++) {
+        if (!strcmp(features[i]->URI, LV2_URID__map)) {
+            map = (LV2_URID_Map *)features[i]->data;
+            break;
+        }
+    }
+    if (!map) return NULL;
+
+    synth = (xsynth_synth_t *)calloc(1, sizeof(xsynth_synth_t));
     if (!synth) return NULL;
     for (i = 0; i < XSYNTH_MAX_POLYPHONY; i++) {
         synth->voice[i] = xsynth_voice_new(synth);
@@ -124,6 +137,7 @@ xsynth_instantiate(const LV2_Descriptor *descriptor, double sample_rate,
     pthread_mutex_init(&synth->patches_mutex, NULL);
     synth->pending_program_change = -1;
     synth->current_program = -1;
+    synth->MIDI_MidiEvent_URI = map->map(map->handle, LV2_MIDI__MidiEvent);
     xsynth_data_friendly_patches(synth);
     xsynth_synth_init_controls(synth);
 
@@ -374,37 +388,37 @@ xsynth_get_midi_controller(LADSPA_Handle instance, unsigned long port)
  * xsynth_handle_event
  */
 static inline void
-xsynth_handle_event(xsynth_synth_t *synth, snd_seq_event_t *event)
+xsynth_handle_event(xsynth_synth_t *synth, const LV2_Atom_Event *event)
 {
-    XDB_MESSAGE(XDB_DSSI, " xsynth_handle_event called with event type %d\n", event->type);
+    const uint8_t* const msg = LV2_ATOM_CONTENTS(LV2_Atom_Event, event);
 
-    switch (event->type) {
-      case SND_SEQ_EVENT_NOTEOFF:
-        xsynth_synth_note_off(synth, event->data.note.note, event->data.note.velocity);
+    XDB_MESSAGE(XDB_DSSI, " xsynth_handle_event called with event type %d\n",
+                lv2_midi_message_type(msg));
+
+    switch (lv2_midi_message_type(msg)) {
+      case LV2_MIDI_MSG_NOTE_OFF:
+        xsynth_synth_note_off(synth, msg[1], msg[2]);
         break;
-      case SND_SEQ_EVENT_NOTEON:
-        if (event->data.note.velocity > 0)
-           xsynth_synth_note_on(synth, event->data.note.note, event->data.note.velocity);
+      case LV2_MIDI_MSG_NOTE_ON:
+        if (msg[2] > 0)
+           xsynth_synth_note_on(synth, msg[1], msg[2]);
         else
-           xsynth_synth_note_off(synth, event->data.note.note, 64); /* shouldn't happen, but... */
+           xsynth_synth_note_off(synth, msg[1], 64); /* shouldn't happen, but... */
         break;
-      case SND_SEQ_EVENT_KEYPRESS:
-        xsynth_synth_key_pressure(synth, event->data.note.note, event->data.note.velocity);
+      case LV2_MIDI_MSG_NOTE_PRESSURE:
+        xsynth_synth_key_pressure(synth, msg[1], msg[2]);
         break;
-      case SND_SEQ_EVENT_CONTROLLER:
-        xsynth_synth_control_change(synth, event->data.control.param, event->data.control.value);
+      case LV2_MIDI_MSG_CONTROLLER:
+        xsynth_synth_control_change(synth, msg[1], msg[2]);
         break;
-      case SND_SEQ_EVENT_CHANPRESS:
-        xsynth_synth_channel_pressure(synth, event->data.control.value);
+      /* LV2_MIDI_MSG_PGM_CHANGE - shouldn't happen !FIX! yes in LV2? */
+      case LV2_MIDI_MSG_CHANNEL_PRESSURE:
+        xsynth_synth_channel_pressure(synth, msg[1]);
         break;
-      case SND_SEQ_EVENT_PITCHBEND:
-        xsynth_synth_pitch_bend(synth, event->data.control.value);
+      case LV2_MIDI_MSG_BENDER:
+        xsynth_synth_pitch_bend(synth, (msg[1] + msg[2] * 128)); // !FIX! this is 0 - 0x3FFF, ALSA was -8192 - 8192
         break;
-      /* SND_SEQ_EVENT_PGMCHANGE - shouldn't happen */
-      /* SND_SEQ_EVENT_SYSEX - shouldn't happen */
-      /* SND_SEQ_EVENT_CONTROL14? */
-      /* SND_SEQ_EVENT_NONREGPARAM? */
-      /* SND_SEQ_EVENT_REGPARAM? */
+      /* System Common, System Real-Time Messages: ? */
       default:
         break;
     }
@@ -420,27 +434,31 @@ xsynth_run_synth(LV2_Handle instance, uint32_t sample_count)
 {
     xsynth_synth_t *synth = (xsynth_synth_t *)instance;
     unsigned long samples_done = 0;
-    unsigned long event_index = 0;
+    const LV2_Atom_Sequence *events;
+    const LV2_Atom_Event *event;
     unsigned long burst_size;
 
     /* attempt the mutex, return only silence if lock fails. */
     if (xsynth_voicelist_mutex_trylock(synth)) {
-        memset(synth->output, 0, sizeof(LADSPA_Data) * sample_count);
+        memset(synth->output, 0, sizeof(float) * sample_count);
         return;
     }
 
     if (synth->pending_program_change > -1)
         dssp_handle_pending_program_change(synth);
 
+    events = synth->events;
+    event = lv2_atom_sequence_begin(&events->body);
     while (samples_done < sample_count) {
         if (!synth->nugget_remains)
             synth->nugget_remains = XSYNTH_NUGGET_SIZE;
 
         /* process any ready events */
-        while (event_index < event_count
-               && samples_done == events[event_index].time.tick) {
-            xsynth_handle_event(synth, &events[event_index]);
-            event_index++;
+        while (!lv2_atom_sequence_is_end(&events->body, events->atom.size, event) &&
+               samples_done == event->time.frames) {
+            if (event->body.type == synth->MIDI_MidiEvent_URI)
+                xsynth_handle_event(synth, event);
+            event = lv2_atom_sequence_next(event);
         }
 
         /* calculate the sample count (burst_size) for the next
@@ -458,10 +476,10 @@ xsynth_run_synth(LV2_Handle instance, uint32_t sample_count)
              * to end when the nugget ends */
             burst_size = synth->nugget_remains;
         }
-        if (event_index < event_count
-            && events[event_index].time.tick - samples_done < burst_size) {
+        if (!lv2_atom_sequence_is_end(&events->body, events->atom.size, event) &&
+            event->time.frames - samples_done < burst_size) {
             /* reduce burst size to end when next event is ready */
-            burst_size = events[event_index].time.tick - samples_done;
+            burst_size = event->time.frames - samples_done;
         }
         if (sample_count - samples_done < burst_size) {
             /* reduce burst size to end at end of this run */

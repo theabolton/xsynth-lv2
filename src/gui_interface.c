@@ -75,7 +75,7 @@ GtkWidget *monophonic_option_menu;
 GtkWidget *glide_option_menu;
 GtkObject *bendrange_adj;
 
-GtkObject *voice_widget[XSYNTH_PORTS_COUNT];
+GtkObject *voice_widget[XSYNTH_PORTS_LAST_PATCH_PORT + 1];
 
 #if GTK_CHECK_VERSION(2, 0, 0)
 #define GTK20SIZEGROUP  GtkSizeGroup
@@ -395,7 +395,7 @@ create_main_window (const char *tag)
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), patches_tab_label);
 
     /* Patch Edit tab */
-    for (i = 0; i < XSYNTH_PORTS_COUNT; i++) voice_widget[i] = NULL;
+    for (i = 0; i <= XSYNTH_PORTS_LAST_PATCH_PORT; i++) voice_widget[i] = NULL;
 
   patch_edit_table = gtk_table_new (5, 3, FALSE);
   gtk_widget_ref (patch_edit_table);

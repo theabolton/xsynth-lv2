@@ -47,7 +47,7 @@
 #include "gui_interface.h"
 #include "gui_data.h"
 
-extern GtkObject *voice_widget[XSYNTH_PORTS_COUNT];
+extern GtkObject *voice_widget[XSYNTH_PORTS_LAST_PATCH_PORT + 1];
 
 extern xsynth_patch_t *patches;
 
@@ -621,7 +621,7 @@ update_voice_widget(int port, float value)
     float cval;
     int dval;
 
-    if (port < XSYNTH_PORT_OSC1_PITCH || port >= XSYNTH_PORTS_COUNT) {
+    if (port < XSYNTH_PORT_OSC1_PITCH || port > XSYNTH_PORT_TUNING) {
         return;
     }
 

@@ -174,6 +174,7 @@ xsynth_connect_port(LV2_Handle instance, uint32_t port, void *data)
       case XSYNTH_PORT_GLIDE_TIME:         synth->glide_time        = data;  break;
       case XSYNTH_PORT_VOLUME:             synth->volume            = data;  break;
       case XSYNTH_PORT_TUNING:             synth->tuning            = data;  break;
+      case XSYNTH_PORT_EVENTS:             synth->events            = data;  break;
 
       default:
         break;

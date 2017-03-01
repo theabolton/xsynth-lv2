@@ -33,6 +33,7 @@
 
 #include <ladspa.h>
 #include "dssi.h"
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 #include "xsynth_types.h"
 #include "xsynth.h"
@@ -40,8 +41,9 @@
 #include "xsynth_synth.h"
 #include "xsynth_voice.h"
 
-static LADSPA_Descriptor *xsynth_LADSPA_descriptor = NULL;
-static DSSI_Descriptor   *xsynth_DSSI_descriptor = NULL;
+#define XSYNTH_LV2_URI  "http://smbolton.com/lv2-plugins/xsynth-lv2"
+
+static LV2_Descriptor    *xsynth_LV2_descriptor = NULL;
 
 static void xsynth_cleanup(LADSPA_Handle instance);
 static void xsynth_run_synth(LADSPA_Handle instance, unsigned long sample_count,
@@ -202,12 +204,6 @@ xsynth_ladspa_run_wrapper(LADSPA_Handle instance, unsigned long sample_count)
 {
     xsynth_run_synth(instance, sample_count, NULL, 0);
 }
-
-// optional:
-//  void (*run_adding)(LADSPA_Handle Instance,
-//                     unsigned long SampleCount);
-//  void (*set_run_adding_gain)(LADSPA_Handle Instance,
-//                              LADSPA_Data   Gain);
 
 /*
  * xsynth_deactivate
@@ -495,29 +491,14 @@ xsynth_run_synth(LADSPA_Handle instance, unsigned long sample_count,
     xsynth_voicelist_mutex_unlock(synth);
 }
 
-// optional:
-//    void (*run_synth_adding)(LADSPA_Handle    Instance,
-//                             unsigned long    SampleCount,
-//                             snd_seq_event_t *Events,
-//                             unsigned long    EventCount);
-
 /* ---- export ---- */
 
-const LADSPA_Descriptor *ladspa_descriptor(unsigned long index)
+LV2_SYMBOL_EXPORT
+const LV2_Descriptor *lv2_descriptor(uint32_t index)
 {
     switch (index) {
     case 0:
-        return xsynth_LADSPA_descriptor;
-    default:
-        return NULL;
-    }
-}
-
-const DSSI_Descriptor *dssi_descriptor(unsigned long index)
-{
-    switch (index) {
-    case 0:
-        return xsynth_DSSI_descriptor;
+        return xsynth_LV2_descriptor;
     default:
         return NULL;
     }
@@ -529,71 +510,25 @@ __attribute__((constructor)) void init()
 void _init()
 #endif
 {
-    int i;
-    char **port_names;
-    LADSPA_PortDescriptor *port_descriptors;
-    LADSPA_PortRangeHint *port_range_hints;
-
     XSYNTH_DEBUG_INIT("xsynth-dssi.so");
 
     xsynth_init_tables();
 
-    xsynth_LADSPA_descriptor =
-        (LADSPA_Descriptor *) malloc(sizeof(LADSPA_Descriptor));
-    if (xsynth_LADSPA_descriptor) {
-        xsynth_LADSPA_descriptor->UniqueID = 2181;
-        xsynth_LADSPA_descriptor->Label = "Xsynth";
-        xsynth_LADSPA_descriptor->Properties = 0;
-        xsynth_LADSPA_descriptor->Name = "Xsynth DSSI plugin";
-        xsynth_LADSPA_descriptor->Maker = "Sean Bolton <musound AT jps DOT net>";
-        xsynth_LADSPA_descriptor->Copyright = "GNU General Public License version 2 or later";
-        xsynth_LADSPA_descriptor->PortCount = XSYNTH_PORTS_COUNT;
+//d        xsynth_LADSPA_descriptor->Label = "Xsynth";
+//d        xsynth_LADSPA_descriptor->Name = "Xsynth DSSI plugin";
+//d        xsynth_LADSPA_descriptor->Maker = "Sean Bolton <musound AT jps DOT net>";
+//d        xsynth_LADSPA_descriptor->Copyright = "GNU General Public License version 2 or later";
 
-        port_descriptors = (LADSPA_PortDescriptor *)
-                                calloc(xsynth_LADSPA_descriptor->PortCount, sizeof
-                                                (LADSPA_PortDescriptor));
-        xsynth_LADSPA_descriptor->PortDescriptors =
-            (const LADSPA_PortDescriptor *) port_descriptors;
-
-        port_range_hints = (LADSPA_PortRangeHint *)
-                                calloc(xsynth_LADSPA_descriptor->PortCount, sizeof
-                                                (LADSPA_PortRangeHint));
-        xsynth_LADSPA_descriptor->PortRangeHints =
-            (const LADSPA_PortRangeHint *) port_range_hints;
-
-        port_names = (char **) calloc(xsynth_LADSPA_descriptor->PortCount, sizeof(char *));
-        xsynth_LADSPA_descriptor->PortNames = (const char **) port_names;
-
-        for (i = 0; i < XSYNTH_PORTS_COUNT; i++) {
-            port_descriptors[i] = xsynth_port_description[i].port_descriptor;
-            port_names[i]       = xsynth_port_description[i].name;
-            port_range_hints[i].HintDescriptor = xsynth_port_description[i].hint_descriptor;
-            port_range_hints[i].LowerBound     = xsynth_port_description[i].lower_bound;
-            port_range_hints[i].UpperBound     = xsynth_port_description[i].upper_bound;
-        }
-
-        xsynth_LADSPA_descriptor->instantiate = xsynth_instantiate;
-        xsynth_LADSPA_descriptor->connect_port = xsynth_connect_port;
-        xsynth_LADSPA_descriptor->activate = xsynth_activate;
-        xsynth_LADSPA_descriptor->run = xsynth_ladspa_run_wrapper;
-        xsynth_LADSPA_descriptor->run_adding = NULL;
-        xsynth_LADSPA_descriptor->set_run_adding_gain = NULL;
-        xsynth_LADSPA_descriptor->deactivate = xsynth_deactivate;
-        xsynth_LADSPA_descriptor->cleanup = xsynth_cleanup;
-    }
-
-    xsynth_DSSI_descriptor = (DSSI_Descriptor *) malloc(sizeof(DSSI_Descriptor));
-    if (xsynth_DSSI_descriptor) {
-        xsynth_DSSI_descriptor->DSSI_API_Version = 1;
-        xsynth_DSSI_descriptor->LADSPA_Plugin = xsynth_LADSPA_descriptor;
-        xsynth_DSSI_descriptor->configure = xsynth_configure;
-        xsynth_DSSI_descriptor->get_program = xsynth_get_program;
-        xsynth_DSSI_descriptor->select_program = xsynth_select_program;
-        xsynth_DSSI_descriptor->get_midi_controller_for_port = xsynth_get_midi_controller;
-        xsynth_DSSI_descriptor->run_synth = xsynth_run_synth;
-        xsynth_DSSI_descriptor->run_synth_adding = NULL;
-        xsynth_DSSI_descriptor->run_multiple_synths = NULL;
-        xsynth_DSSI_descriptor->run_multiple_synths_adding = NULL;
+    xsynth_LV2_descriptor = (LV2_Descriptor *) malloc(sizeof(LV2_Descriptor));
+    if (xsynth_LV2_descriptor) {
+        xsynth_LV2_descriptor->URI = XSYNTH_LV2_URI;
+        xsynth_LV2_descriptor->instantiate = xsynth_instantiate;
+        xsynth_LV2_descriptor->connect_port = xsynth_connect_port;
+        xsynth_LV2_descriptor->activate = xsynth_activate;
+        xsynth_LV2_descriptor->run = xsynth_run_synth;
+        xsynth_LV2_descriptor->deactivate = xsynth_deactivate;
+        xsynth_LV2_descriptor->cleanup = xsynth_cleanup;
+        xsynth_LV2_descriptor->extension_data = NULL;
     }
 }
 
@@ -603,13 +538,7 @@ __attribute__((destructor)) void fini()
 void _fini()
 #endif
 {
-    if (xsynth_LADSPA_descriptor) {
-        free((LADSPA_PortDescriptor *) xsynth_LADSPA_descriptor->PortDescriptors);
-        free((char **) xsynth_LADSPA_descriptor->PortNames);
-        free((LADSPA_PortRangeHint *) xsynth_LADSPA_descriptor->PortRangeHints);
-        free(xsynth_LADSPA_descriptor);
-    }
-    if (xsynth_DSSI_descriptor) {
-        free(xsynth_DSSI_descriptor);
+    if (xsynth_LV2_descriptor) {
+        free(xsynth_LV2_descriptor);
     }
 }

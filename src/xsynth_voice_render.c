@@ -390,41 +390,41 @@ vcf_mvclpf(xsynth_voice_t *voice, unsigned long sample_count,
         w = cutoff[s];
         if (w < 0.75f) w *= 1.005f - w * (0.624f - w * (0.65f - w * 0.54f));
         else
-	{
-	    w *= 0.6748f;
+        {
+            w *= 0.6748f;
             if (w > 0.82f) w = 0.82f;
-	}
+        }
 
         x = in[s] * g0 - (4.3f - 0.2f * w) * res * c5 + 1e-10f;
         x /= sqrtf(1.0f + x * x);  /* x = tanh(x) */
-        d = w * (x  - delay1) / (1.0f + delay1 * delay1);            
+        d = w * (x  - delay1) / (1.0f + delay1 * delay1);
         x = delay1 + 0.77f * d;
-        delay1 = x + 0.23f * d;        
-        d = w * (x  - delay2) / (1.0f + delay2 * delay2);            
+        delay1 = x + 0.23f * d;
+        d = w * (x  - delay2) / (1.0f + delay2 * delay2);
         x = delay2 + 0.77f * d;
-        delay2 = x + 0.23f * d;        
-        d = w * (x  - delay3) / (1.0f + delay3 * delay3);            
+        delay2 = x + 0.23f * d;
+        d = w * (x  - delay3) / (1.0f + delay3 * delay3);
         x = delay3 + 0.77f * d;
-        delay3 = x + 0.23f * d;        
+        delay3 = x + 0.23f * d;
         d = w * (x  - delay4);
         x = delay4 + 0.77f * d;
-        delay4 = x + 0.23f * d;        
+        delay4 = x + 0.23f * d;
         c5 += 0.85f * (delay4 - c5);
 
         x = in[s] * g0 - (4.3f - 0.2f * w) * res * c5;
         x /= sqrtf(1.0f + x * x);  /* x = tanh(x) */
-        d = w * (x  - delay1) / (1.0f + delay1 * delay1);            
+        d = w * (x  - delay1) / (1.0f + delay1 * delay1);
         x = delay1 + 0.77f * d;
-        delay1 = x + 0.23f * d;        
-        d = w * (x  - delay2) / (1.0f + delay2 * delay2);            
+        delay1 = x + 0.23f * d;
+        d = w * (x  - delay2) / (1.0f + delay2 * delay2);
         x = delay2 + 0.77f * d;
-        delay2 = x + 0.23f * d;        
-        d = w * (x  - delay3) / (1.0f + delay3 * delay3);            
+        delay2 = x + 0.23f * d;
+        d = w * (x  - delay3) / (1.0f + delay3 * delay3);
         x = delay3 + 0.77f * d;
-        delay3 = x + 0.23f * d;        
+        delay3 = x + 0.23f * d;
         d = w * (x  - delay4);
         x = delay4 + 0.77f * d;
-        delay4 = x + 0.23f * d;        
+        delay4 = x + 0.23f * d;
         c5 += 0.85f * (delay4 - c5);
 
         out[s] += g1 * delay4 * amp[s];
@@ -492,7 +492,7 @@ xsynth_voice_render(xsynth_synth_t *synth, xsynth_voice_t *voice,
     }
 
     fund_pitch *= synth->pitch_bend * *(synth->tuning);
-    
+
     omega1 = *(synth->osc1_pitch) * fund_pitch;
     omega2 = *(synth->osc2_pitch) * fund_pitch;
 
@@ -620,4 +620,3 @@ xsynth_voice_render(xsynth_synth_t *synth, xsynth_voice_t *voice,
     voice->eg2_phase  = eg2_phase;
     voice->osc_index  = osc_index;
 }
-

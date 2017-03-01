@@ -75,4 +75,3 @@ void update_bendrange(const char *value);
 void rebuild_patches_clist(void);
 
 #endif  /* _GUI_CALLBACKS_H */
-

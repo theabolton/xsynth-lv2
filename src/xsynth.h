@@ -72,4 +72,3 @@
 #define XSYNTH_DEFAULT_POLYPHONY  4
 
 #endif /* _XSYNTH_H */
-

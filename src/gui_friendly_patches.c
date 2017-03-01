@@ -636,4 +636,3 @@ xsynth_patch_t xsynth_friendly_patches[FRIENDLY_PATCH_COUNT] = {
         0.984375, 0.5
     }
 };
-

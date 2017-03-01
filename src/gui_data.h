@@ -51,4 +51,3 @@ int   xsynth_data_read_patch(FILE *file, xsynth_patch_t *patch);
 int   xsynth_data_decode_patches(const char *encoded, xsynth_patch_t *patches);
 
 #endif /* _GUI_DATA_H */
-

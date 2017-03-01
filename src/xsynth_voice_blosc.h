@@ -618,4 +618,3 @@ BLOSC_THIS(, unsigned long sample_count, xsynth_voice_t *voice,
 
 #undef BLOSC_THIS
 #undef BLOSC_W_TABLE
-

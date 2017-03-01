@@ -357,4 +357,3 @@ xsynth_voice_update_pressure_mod(xsynth_synth_t *synth, xsynth_voice_t *voice)
      * to filter oscillation) */
     voice->pressure = 1.0f - (p * 0.75f);
 }
-

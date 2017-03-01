@@ -47,4 +47,3 @@ extern int             patch_section_dirty[4];
 extern char           *project_directory;
 
 #endif /* _GUI_MAIN_H */
-

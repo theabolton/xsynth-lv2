@@ -83,4 +83,3 @@ struct xsynth_port_descriptor {
 extern struct xsynth_port_descriptor xsynth_port_description[];
 
 #endif /* _XSYNTH_PORTS_H */
-

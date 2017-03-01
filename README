@@ -101,7 +101,7 @@ aren't particularly helpful, so try this instead:
 4. Enable debugging information if you desire: edit the file
     src/xsynth.h, and define XSYNTH_DEBUG as explained in the
     comments.
-    
+
 5. Do 'make'.  Hopefully it should build without warnings (or
     errors.)
 
@@ -222,11 +222,11 @@ Polyphony: Sets the maximum polyphony for this instance of the
 Monophonic Mode:
     'Off'  - polyphonic operation.
     'On'   - monophonic operation, where the envelopes are
-             retriggered upon each incoming note on event. 
+             retriggered upon each incoming note on event.
     'Once' - monophonic operation, where the envelopes are triggered
              only on the first note on of a legato phrase -- that
              is, if you hold one note while playing a second, the
-             envelopes will not be retriggered for the second note. 
+             envelopes will not be retriggered for the second note.
     'Both' - monophonic operation, where the envelopes are
              retriggered at each note on, and upon note off when
              other keys are still held.

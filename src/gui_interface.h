@@ -67,4 +67,3 @@ extern GtkObject *voice_widget[];
 void create_windows(const char *instance_tag);
 
 #endif /* _GUI_INTERFACE_H */
-

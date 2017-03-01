@@ -121,11 +121,11 @@ xsynth_synth_free_voice_by_kill(xsynth_synth_t *synth)
 
     for (i = 0; i < synth->voices; i++) {
         voice = synth->voice[i];
-    
+
         /* safeguard against an available voice. */
         if (_AVAILABLE(voice))
             return voice;
-    
+
         /* Determine, how 'important' a voice is.
          * Start with an arbitrary number */
         this_voice_prio = 10000;
@@ -151,7 +151,7 @@ xsynth_synth_free_voice_by_kill(xsynth_synth_t *synth)
          * from the priority - an older voice is just a little bit less
          * important than a younger voice. */
         this_voice_prio -= (synth->note_id - voice->note_id);
-    
+
         /* -FIX- not yet implemented:
          * /= take a rough estimate of loudness into account. Louder voices are more important. =/
          * if (voice->volenv_section != FLUID_VOICE_ENVATTACK){
@@ -254,7 +254,7 @@ xsynth_synth_key_pressure(xsynth_synth_t *synth, unsigned char key, unsigned cha
 
     /* save it for future voices */
     synth->key_pressure[key] = pressure;
-    
+
     /* check if any playing voices need updating */
     for (i = 0; i < synth->voices; i++) {
         voice = synth->voice[i];
@@ -646,10 +646,9 @@ out[0] += 0.10f; /* add a 'buzz' to output so there's something audible even whe
     /* render each active voice */
     for (i = 0; i < synth->voices; i++) {
         voice = synth->voice[i];
-    
+
         if (_PLAYING(voice)) {
             xsynth_voice_render(synth, voice, out, sample_count, do_control_update);
         }
     }
 }
-

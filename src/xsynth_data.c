@@ -91,7 +91,7 @@ parse_name(const char *buf, char *name, int *inlen)
  * numbers containing either the locale-specified decimal point or the
  * "C" locale decimal point (".").  That said, there are important
  * differences between this and a standard sscanf(3):
- * 
+ *
  *  - this function only skips whitespace when there is explicit ' ' in
  *      the format,
  *  - it doesn't return EOF like sscanf(3), just the number of sucessful
@@ -394,7 +394,7 @@ _atof(const char *z, double *pResult){
           result *= 1.0e+308;
         }
       }else{
-        /* 1.0e+22 is the largest power of 10 than can be 
+        /* 1.0e+22 is the largest power of 10 than can be
         ** represented exactly. */
         while( e%22 ) { scale *= 1.0e+1; e -= 1; }
         while( e>0 ) { scale *= 1.0e+22; e -= 22; }
@@ -553,7 +553,7 @@ xsynth_data_decode_patches(const char *encoded, xsynth_patch_t *patches)
     tmp = (xsynth_patch_t *)malloc(32 * sizeof(xsynth_patch_t));
     if (!tmp)
         return 0;  /* out of memory */
-    
+
     for (j = 0; j < 32; j++) {
         pp = &tmp[j];
 
@@ -617,4 +617,3 @@ xsynth_data_decode_patches(const char *encoded, xsynth_patch_t *patches)
 
     return 1;
 }
-

@@ -93,4 +93,3 @@ struct xsynth_port_descriptor xsynth_port_description[XSYNTH_PORTS_COUNT] = {
 #undef XPT_ONOFF
 #undef XPT_VCF
 };
-

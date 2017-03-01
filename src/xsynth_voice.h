@@ -187,7 +187,7 @@ void xsynth_voice_render(xsynth_synth_t *synth, xsynth_voice_t *voice,
 
 /*
  * xsynth_voice_off
- * 
+ *
  * Purpose: Turns off a voice immediately, meaning that it is not processed
  * anymore by the render loop.
  */
@@ -211,4 +211,3 @@ xsynth_voice_start_voice(xsynth_voice_t *voice)
 }
 
 #endif /* _XSYNTH_VOICE_H */
-

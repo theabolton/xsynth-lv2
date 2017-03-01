@@ -334,7 +334,7 @@ xsynth_select_program(LADSPA_Handle handle, unsigned long bank,
     /* ignore invalid program requests */
     if (bank || program >= 128)
         return;
-    
+
     /* Attempt the patch mutex, return if lock fails. */
     if (pthread_mutex_trylock(&synth->patches_mutex)) {
         synth->pending_program_change = program;
@@ -451,8 +451,8 @@ xsynth_run_synth(LADSPA_Handle instance, unsigned long sample_count,
             synth->nugget_remains = XSYNTH_NUGGET_SIZE;
 
         /* process any ready events */
-	while (event_index < event_count
-	       && samples_done == events[event_index].time.tick) {
+        while (event_index < event_count
+               && samples_done == events[event_index].time.tick) {
             xsynth_handle_event(synth, &events[event_index]);
             event_index++;
         }
@@ -613,4 +613,3 @@ void _fini()
         free(xsynth_DSSI_descriptor);
     }
 }
-

@@ -191,4 +191,3 @@ set_waveform_pixmap(GtkWidget *widget, int waveform)
     if (waveform >=0 && waveform <= 6)
         gtk_pixmap_set(GTK_PIXMAP(widget), waveform_pixmaps[waveform], NULL);
 }
-

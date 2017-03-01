@@ -33,7 +33,7 @@
 
 #include <gtk/gtk.h>
 #include <lo/lo.h>
- 
+
 #include "xsynth_types.h"
 #include "xsynth.h"
 #include "gui_callbacks.h"
@@ -295,7 +295,7 @@ main(int argc, char *argv[])
     fprintf(stderr, "Xsynth_gtk starting (pid %d)...\n", getpid());
 #endif
     /* { int i; fprintf(stderr, "args:\n"); for(i=0; i<argc; i++) printf("%d: %s\n", i, argv[i]); } // debug */
-    
+
     gtk_init(&argc, &argv);
 
     if (argc > 1 && !strcmp(argv[1], "-test")) {
@@ -403,4 +403,3 @@ main(int argc, char *argv[])
 
     return 0;
 }
-

@@ -351,7 +351,7 @@ gtk_knob_size_allocate (GtkWidget     *widget,
     g_return_if_fail (allocation != NULL);
 
     widget->allocation = *allocation;
- 
+
     if (GTK_WIDGET_REALIZED (widget)) {
         gdk_window_move_resize (widget->window,
                                 allocation->x, allocation->y,
@@ -536,7 +536,7 @@ gtk_knob_update_mouse(GtkKnob *knob, gint x, gint y, gboolean absolute)
         dh = x - knob->center_x;
 
         if (abs(dv) < HALF_KNOB_SIZE && abs(dh) < HALF_KNOB_SIZE) {
-            
+
             /* translate close-in motion into fine adjustment */
             dv = knob->saved_y - y;
             dh = x - knob->saved_x;
@@ -740,7 +740,7 @@ gtk_knob_expose (GtkWidget *widget, GdkEventExpose *event)
 #if GTK_CHECK_VERSION(2, 8, 0)
         if (common.knob_surface == NULL)
             gtk_knob_common_initialize(widget);
-            
+
         if ((center_x - HALF_KNOB_SIZE >= event->area.x + event->area.width)  ||
             (center_x + HALF_KNOB_SIZE <= event->area.x)                      ||
             (center_y - HALF_KNOB_SIZE >= event->area.y + event->area.height) ||
@@ -1262,4 +1262,3 @@ static unsigned char knob_i_png[819] =
   "\227E/\0\0\0\0IEND\256B`\202";
 
 #endif /* GTK_CHECK_VERSION(2, 8, 0) */
-

@@ -472,7 +472,7 @@ create_main_window (const char *tag)
   gtk_spin_button_set_update_policy (GTK_SPIN_BUTTON (osc1_waveform_spin), GTK_UPDATE_IF_VALID);
   gtk_spin_button_set_snap_to_ticks (GTK_SPIN_BUTTON (osc1_waveform_spin), TRUE);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (osc1_waveform_spin), TRUE);
-    
+
     create_voice_slider(main_window, XSYNTH_PORT_OSC1_PITCH, osc1_table, 0, 0, "pitch", col1_sizegroup);
     GTK_ADJUSTMENT(voice_widget[XSYNTH_PORT_OSC1_PITCH])->lower = -10.0f;
     gtk_adjustment_changed (GTK_ADJUSTMENT(voice_widget[XSYNTH_PORT_OSC1_PITCH]));
@@ -556,7 +556,7 @@ create_main_window (const char *tag)
   gtk_spin_button_set_update_policy (GTK_SPIN_BUTTON (osc2_waveform_spin), GTK_UPDATE_IF_VALID);
   gtk_spin_button_set_snap_to_ticks (GTK_SPIN_BUTTON (osc2_waveform_spin), TRUE);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (osc2_waveform_spin), TRUE);
-    
+
     create_voice_slider(main_window, XSYNTH_PORT_OSC2_PITCH, osc2_table, 0, 0, "pitch", col2_sizegroup);
     GTK_ADJUSTMENT(voice_widget[XSYNTH_PORT_OSC2_PITCH])->lower = -10.0f;
     gtk_adjustment_changed (GTK_ADJUSTMENT(voice_widget[XSYNTH_PORT_OSC2_PITCH]));
@@ -620,7 +620,7 @@ create_main_window (const char *tag)
   gtk_spin_button_set_update_policy (GTK_SPIN_BUTTON (lfo_waveform_spin), GTK_UPDATE_IF_VALID);
   gtk_spin_button_set_snap_to_ticks (GTK_SPIN_BUTTON (lfo_waveform_spin), TRUE);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (lfo_waveform_spin), TRUE);
-    
+
     create_voice_slider(main_window, XSYNTH_PORT_LFO_FREQUENCY, lfo_table, 0, 0, "frequency", col3_sizegroup);
 
     create_voice_slider(main_window, XSYNTH_PORT_LFO_AMOUNT_O, lfo_table, 0, 2, "pitch mod", col3_sizegroup);
@@ -1133,7 +1133,7 @@ create_main_window (const char *tag)
     gtk_signal_connect (GTK_OBJECT (main_window), "delete_event",
                         (GtkSignalFunc)on_delete_event_wrapper,
                         (gpointer)on_menu_quit_activate);
-    
+
   gtk_signal_connect (GTK_OBJECT (menu_open), "activate",
                       GTK_SIGNAL_FUNC (on_menu_open_activate),
                       NULL);
@@ -1949,4 +1949,3 @@ create_windows(const char *instance_tag)
     create_edit_save_position_window(tag);
     create_notice_window(tag);
 }
-

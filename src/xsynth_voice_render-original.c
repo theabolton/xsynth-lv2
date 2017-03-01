@@ -237,7 +237,7 @@ xsynth_voice_render(xsynth_synth_t *synth, xsynth_voice_t *voice,
 
     voice->prev_pitch = fund_pitch;                                 /* save pitch for next time */
     fund_pitch *= synth->pitch_bend;                                /* modify pitch after portamento */
-    
+
     omega1 = *(synth->osc1_pitch) * fund_pitch;
     omega2 = *(synth->osc2_pitch) * fund_pitch;
 
@@ -365,4 +365,3 @@ xsynth_voice_render(xsynth_synth_t *synth, xsynth_voice_t *voice,
     voice->delay3     = delay3;
     voice->delay4     = delay4;
 }
-

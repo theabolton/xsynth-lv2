@@ -33,9 +33,9 @@ extern "C" {
 #endif
 
 #define GTK_TYPE_KNOB            (gtk_knob_get_type ())
-#define GTK_KNOB(obj)		 GTK_CHECK_CAST(obj, gtk_knob_get_type(), GtkKnob)
+#define GTK_KNOB(obj)            GTK_CHECK_CAST(obj, gtk_knob_get_type(), GtkKnob)
 #define GTK_KNOB_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_KNOB, GtkKnobClass))
-#define GTK_IS_KNOB(obj)	 GTK_CHECK_TYPE(obj, gtk_knob_get_type())
+#define GTK_IS_KNOB(obj)         GTK_CHECK_TYPE(obj, gtk_knob_get_type())
 #define GTK_IS_KNOB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_KNOB))
 #define GTK_KNOB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_KNOB, GtkKnobClass))
 
@@ -81,4 +81,3 @@ GtkUpdateType  gtk_knob_get_update_policy(GtkKnob *knob);
 #endif
 
 #endif /* __GTK_KNOB_H__ */
-

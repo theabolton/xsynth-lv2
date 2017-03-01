@@ -63,7 +63,7 @@ struct _xsynth_synth_t {
     int             glide;             /* current glide mode */
     float           last_noteon_pitch; /* glide start pitch for non-legato modes */
     signed char     held_keys[8];      /* for monophonic key tracking, an array of note-ons, most recently received first */
-    
+
     pthread_mutex_t voicelist_mutex;
     int             voicelist_mutex_grab_failed;
 
@@ -175,4 +175,3 @@ char *xsynth_dssi_configure_message(const char *fmt, ...);
 #define XSYNTH_SYNTH_SUSTAINED(_s)  ((_s)->cc[MIDI_CTL_SUSTAIN] >= 64)
 
 #endif /* _XSYNTH_SYNTH_H */
-

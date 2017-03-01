@@ -96,7 +96,7 @@ gui_data_import_patch(xsynth_patch_t *xsynth_patch,
     if (!unpack_name) {
         strcpy(xsynth_patch->name, "imported patch");
     }
-    
+
     /* Unpack patch data */
     /* Continuous knobs */
     /* VCO 1 */
@@ -519,4 +519,3 @@ gui_data_patch_compare(xsynth_patch_t *patch1, xsynth_patch_t *patch2)
 
     return 1;
 }
-

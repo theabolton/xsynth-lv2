@@ -23,7 +23,7 @@
 * Added '-test' option to allow testing the GUI without a host.
 * Silently ignore 'sample-rate' method.
 * Fixed GtkSpinButton adjustments to avoid page_size warning with
-    GTK+ >=2.14. 
+    GTK+ >=2.14.
 * gcc 4.3 character signedness fixes.
 * Changes to build files to support Mac OS X and newer gcc/glibc on
     linux.

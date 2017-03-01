@@ -528,7 +528,7 @@ on_polyphony_change(GtkWidget *widget, gpointer data)
 {
     int polyphony = lrintf(GTK_ADJUSTMENT(widget)->value);
     char buffer[4];
-    
+
     if (internal_gui_update_only) {
         /* GUIDB_MESSAGE(DB_GUI, " on_polyphony_change: skipping further action\n"); */
         return;
@@ -565,7 +565,7 @@ on_bendrange_change(GtkWidget *widget, gpointer data)
 {
     int bendrange = lrintf(GTK_ADJUSTMENT(widget)->value);
     char buffer[4];
-    
+
     if (internal_gui_update_only) {
         /* GUIDB_MESSAGE(DB_GUI, " on_bendrange_change: skipping further action\n"); */
         return;
@@ -630,7 +630,7 @@ update_voice_widget(int port, float value)
         value = xpd->lower_bound;
     else if (value > xpd->upper_bound)
         value = xpd->upper_bound;
-    
+
     internal_gui_update_only = 1;
 
     if (port == XSYNTH_PORT_TUNING) {  /* handle tuning specially, since it's not stored in patch */
@@ -793,36 +793,36 @@ update_patch_from_voice_widgets(xsynth_patch_t *patch)
 {
     int i;
 
-    patch->osc1_pitch           = get_value_from_slider(XSYNTH_PORT_OSC1_PITCH);        
-    patch->osc1_waveform        = get_value_from_detent(XSYNTH_PORT_OSC1_WAVEFORM);     
-    patch->osc1_pulsewidth      = get_value_from_slider(XSYNTH_PORT_OSC1_PULSEWIDTH);   
-    patch->osc2_pitch           = get_value_from_slider(XSYNTH_PORT_OSC2_PITCH);        
-    patch->osc2_waveform        = get_value_from_detent(XSYNTH_PORT_OSC2_WAVEFORM);     
-    patch->osc2_pulsewidth      = get_value_from_slider(XSYNTH_PORT_OSC2_PULSEWIDTH);   
-    patch->osc_sync             = get_value_from_onoff(XSYNTH_PORT_OSC_SYNC);          
-    patch->osc_balance          = get_value_from_slider(XSYNTH_PORT_OSC_BALANCE);       
-    patch->lfo_frequency        = get_value_from_slider(XSYNTH_PORT_LFO_FREQUENCY);     
-    patch->lfo_waveform         = get_value_from_detent(XSYNTH_PORT_LFO_WAVEFORM);      
-    patch->lfo_amount_o         = get_value_from_slider(XSYNTH_PORT_LFO_AMOUNT_O);      
-    patch->lfo_amount_f         = get_value_from_slider(XSYNTH_PORT_LFO_AMOUNT_F);      
-    patch->eg1_attack_time      = get_value_from_slider(XSYNTH_PORT_EG1_ATTACK_TIME);   
-    patch->eg1_decay_time       = get_value_from_slider(XSYNTH_PORT_EG1_DECAY_TIME);    
-    patch->eg1_sustain_level    = get_value_from_slider(XSYNTH_PORT_EG1_SUSTAIN_LEVEL); 
-    patch->eg1_release_time     = get_value_from_slider(XSYNTH_PORT_EG1_RELEASE_TIME);  
+    patch->osc1_pitch           = get_value_from_slider(XSYNTH_PORT_OSC1_PITCH);
+    patch->osc1_waveform        = get_value_from_detent(XSYNTH_PORT_OSC1_WAVEFORM);
+    patch->osc1_pulsewidth      = get_value_from_slider(XSYNTH_PORT_OSC1_PULSEWIDTH);
+    patch->osc2_pitch           = get_value_from_slider(XSYNTH_PORT_OSC2_PITCH);
+    patch->osc2_waveform        = get_value_from_detent(XSYNTH_PORT_OSC2_WAVEFORM);
+    patch->osc2_pulsewidth      = get_value_from_slider(XSYNTH_PORT_OSC2_PULSEWIDTH);
+    patch->osc_sync             = get_value_from_onoff(XSYNTH_PORT_OSC_SYNC);
+    patch->osc_balance          = get_value_from_slider(XSYNTH_PORT_OSC_BALANCE);
+    patch->lfo_frequency        = get_value_from_slider(XSYNTH_PORT_LFO_FREQUENCY);
+    patch->lfo_waveform         = get_value_from_detent(XSYNTH_PORT_LFO_WAVEFORM);
+    patch->lfo_amount_o         = get_value_from_slider(XSYNTH_PORT_LFO_AMOUNT_O);
+    patch->lfo_amount_f         = get_value_from_slider(XSYNTH_PORT_LFO_AMOUNT_F);
+    patch->eg1_attack_time      = get_value_from_slider(XSYNTH_PORT_EG1_ATTACK_TIME);
+    patch->eg1_decay_time       = get_value_from_slider(XSYNTH_PORT_EG1_DECAY_TIME);
+    patch->eg1_sustain_level    = get_value_from_slider(XSYNTH_PORT_EG1_SUSTAIN_LEVEL);
+    patch->eg1_release_time     = get_value_from_slider(XSYNTH_PORT_EG1_RELEASE_TIME);
     patch->eg1_vel_sens         = get_value_from_slider(XSYNTH_PORT_EG1_VEL_SENS);
-    patch->eg1_amount_o         = get_value_from_slider(XSYNTH_PORT_EG1_AMOUNT_O);      
-    patch->eg1_amount_f         = get_value_from_slider(XSYNTH_PORT_EG1_AMOUNT_F);      
-    patch->eg2_attack_time      = get_value_from_slider(XSYNTH_PORT_EG2_ATTACK_TIME);   
-    patch->eg2_decay_time       = get_value_from_slider(XSYNTH_PORT_EG2_DECAY_TIME);    
-    patch->eg2_sustain_level    = get_value_from_slider(XSYNTH_PORT_EG2_SUSTAIN_LEVEL); 
-    patch->eg2_release_time     = get_value_from_slider(XSYNTH_PORT_EG2_RELEASE_TIME);  
+    patch->eg1_amount_o         = get_value_from_slider(XSYNTH_PORT_EG1_AMOUNT_O);
+    patch->eg1_amount_f         = get_value_from_slider(XSYNTH_PORT_EG1_AMOUNT_F);
+    patch->eg2_attack_time      = get_value_from_slider(XSYNTH_PORT_EG2_ATTACK_TIME);
+    patch->eg2_decay_time       = get_value_from_slider(XSYNTH_PORT_EG2_DECAY_TIME);
+    patch->eg2_sustain_level    = get_value_from_slider(XSYNTH_PORT_EG2_SUSTAIN_LEVEL);
+    patch->eg2_release_time     = get_value_from_slider(XSYNTH_PORT_EG2_RELEASE_TIME);
     patch->eg2_vel_sens         = get_value_from_slider(XSYNTH_PORT_EG2_VEL_SENS);
-    patch->eg2_amount_o         = get_value_from_slider(XSYNTH_PORT_EG2_AMOUNT_O);      
-    patch->eg2_amount_f         = get_value_from_slider(XSYNTH_PORT_EG2_AMOUNT_F);      
-    patch->vcf_cutoff           = get_value_from_slider(XSYNTH_PORT_VCF_CUTOFF);        
-    patch->vcf_qres             = get_value_from_slider(XSYNTH_PORT_VCF_QRES);          
+    patch->eg2_amount_o         = get_value_from_slider(XSYNTH_PORT_EG2_AMOUNT_O);
+    patch->eg2_amount_f         = get_value_from_slider(XSYNTH_PORT_EG2_AMOUNT_F);
+    patch->vcf_cutoff           = get_value_from_slider(XSYNTH_PORT_VCF_CUTOFF);
+    patch->vcf_qres             = get_value_from_slider(XSYNTH_PORT_VCF_QRES);
     patch->vcf_mode             = get_value_from_opmenu(XSYNTH_PORT_VCF_MODE);
-    patch->glide_time           = get_value_from_slider(XSYNTH_PORT_GLIDE_TIME);        
+    patch->glide_time           = get_value_from_slider(XSYNTH_PORT_GLIDE_TIME);
     patch->volume               = get_value_from_slider(XSYNTH_PORT_VOLUME);
 
     strncpy(patch->name, gtk_entry_get_text(GTK_ENTRY(name_entry)), 30);
@@ -961,7 +961,6 @@ rebuild_patches_clist(void)
 #if GTK_CHECK_VERSION(2, 0, 0)
     /* kick GTK+ 2.4.x in the pants.... */
     gtk_signal_emit_by_name (GTK_OBJECT (patches_clist), "check-resize");
-#endif    
+#endif
     gtk_clist_thaw(GTK_CLIST(patches_clist));
 }
-

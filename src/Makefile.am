@@ -1,16 +1,16 @@
 ## Process this file with automake to produce Makefile.in
 
 if BUILD_GUI
-ui_PROGRAMS = Xsynth_gtk
+plugin_PROGRAMS = Xsynth_gtk
 else
-ui_PROGRAMS =
+plugin_PROGRAMS =
 endif
 
-uidir = $(libdir)/dssi/xsynth-dssi
+plugindir = $(libdir)/lv2/xsynth-lv2
 
-plugindir = $(libdir)/dssi
+plugin_DATA = manifest.ttl xsynth-lv2.ttl
 
-plugin_LTLIBRARIES = xsynth-dssi.la
+plugin_LTLIBRARIES = xsynth-lv2.la
 
 Xsynth_gtk_SOURCES = \
 	gui_callbacks.c \
@@ -47,11 +47,11 @@ Xsynth_gtk_CFLAGS = @GTK_CFLAGS@ $(AM_CFLAGS)
 
 Xsynth_gtk_LDADD = -lm @GTK_LIBS@ $(AM_LDFLAGS)
 
-xsynth_dssi_la_SOURCES = \
+xsynth_lv2_la_SOURCES = \
 	gui_data.h \
 	gui_friendly_patches.c \
 	minblep_tables.c \
-	xsynth-dssi.c \
+	xsynth-lv2.c \
 	xsynth.h \
 	xsynth_data.c \
 	xsynth_ports.c \
@@ -64,7 +64,6 @@ xsynth_dssi_la_SOURCES = \
 	xsynth_voice_blosc.h \
 	xsynth_voice_render.c
 
-xsynth_dssi_la_LDFLAGS = -module -avoid-version
+xsynth_lv2_la_LDFLAGS = -module -avoid-version
 
-xsynth_dssi_la_LIBADD = -lm
-
+xsynth_lv2_la_LIBADD = -lm

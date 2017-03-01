@@ -1,0 +1,13 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+# @prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
+
+<http://smbolton.com/lv2-plugins/xsynth-lv2>
+        a lv2:Plugin ;
+        lv2:binary <xsynth-lv2@LIB_EXT@> ;
+        rdfs:seeAlso <xsynth-lv2.ttl> .
+
+# <http://smbolton.com/lv2-plugins/xsynth-lv2#ui>
+#        a ui:GtkUI ;
+#        ui:binary <Xsynth_gtkXX@LIB_EXT@> ;
+#        rdfs:seeAlso <xsynth-lv2.ttl> .

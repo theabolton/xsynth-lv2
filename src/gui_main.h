@@ -46,4 +46,9 @@ extern xsynth_patch_t *patches;
 extern int             patch_section_dirty[4];
 extern char           *project_directory;
 
+typedef struct _xsynth_ui_t xsynth_ui_t;
+
+struct _xsynth_ui_t {
+};
+
 #endif /* _GUI_MAIN_H */

@@ -38,6 +38,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 
 #include "xsynth_types.h"
 #include "xsynth.h"
@@ -96,9 +97,9 @@ static LV2_Handle
 xsynth_instantiate(const LV2_Descriptor *descriptor, double sample_rate,
                    const char *bundle_path, const LV2_Feature * const *features)
 {
+    int i;
     LV2_URID_Map *map = NULL;
     xsynth_synth_t *synth;
-    int i;
 
     for (i = 0; features[i]; i++) {
         if (!strcmp(features[i]->URI, LV2_URID__map)) {

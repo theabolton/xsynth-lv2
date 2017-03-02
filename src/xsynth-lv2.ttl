@@ -5,6 +5,7 @@
 @prefix pprops: <http://lv2plug.in/ns/ext/port-props#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
 @prefix urid: <http://lv2plug.in/ns/ext/urid#> .
 
 <http://smbolton.com/lv2-plugins/xsynth-lv2>
@@ -14,6 +15,7 @@
     doap:license <https://opensource.org/licenses/gpl-license> ;
     lv2:requiredFeature urid:map ;
     lv2:optionalFeature lv2:hardRTCapable ;
+    ui:ui <http://smbolton.com/lv2-plugins/xsynth-lv2#ui> ;
     lv2:port [
         a lv2:AudioPort , lv2:OutputPort ;
         lv2:index 0 ;
@@ -325,4 +327,7 @@
         lv2:name "Events"
     ] .
 
-#   ui:ui <http://smbolton.com/lv2-plugins/xsynth-lv2#ui> ;
+<http://smbolton.com/lv2-plugins/xsynth-lv2#ui>
+    a ui:GtkUI ;
+    lv2:requiredFeature urid:map ;
+    lv2:extensionData ui:showInterface .

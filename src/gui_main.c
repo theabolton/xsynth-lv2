@@ -33,12 +33,17 @@
 
 #include <gtk/gtk.h>
 #include <lo/lo.h>
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 #include "xsynth_types.h"
 #include "xsynth.h"
+#include "gui_main.h"
 #include "gui_callbacks.h"
 #include "gui_interface.h"
 #include "gui_data.h"
+
+#define XSYNTH_UI_URI  "http://smbolton.com/lv2-plugins/xsynth-lv2#ui"
 
 /* ==== global variables ==== */
 
@@ -402,4 +407,68 @@ main(int argc, char *argv[])
     free(osc_self_url);
 
     return 0;
+}
+
+/* ==== !FIX! LV2 stuff ==== */
+
+static LV2UI_Handle
+instantiate(const LV2UI_Descriptor *descriptor,
+            const char *plugin_uri,
+            const char *bundle_path,
+            LV2UI_Write_Function write_function,
+            LV2UI_Controller controller,
+            LV2UI_Widget *widget,
+            const LV2_Feature *const *features)
+{
+    // !FIX! save write_function, controller, (what else?)
+    int i;
+    LV2_URID_Map *map = NULL;
+    xsynth_ui_t *ui;
+
+    for (i = 0; features[i]; i++) {
+        if (!strcmp(features[i]->URI, LV2_URID__map)) {
+            map = (LV2_URID_Map *)features[i]->data;
+            break;
+        }
+    }
+    if (!map) return NULL;
+
+    ui = (xsynth_ui_t *)calloc(1, sizeof(xsynth_ui_t));
+    if (!ui) return NULL;
+
+    // uris->atom_Float = map->map(map->handle, LV2_ATOM__Float);
+
+    *widget = gtk_label_new("Yes!");
+
+    return ui;
+}
+
+static void
+cleanup(LV2UI_Handle uih)
+{
+    xsynth_ui_t *ui = (xsynth_ui_t *)uih;
+}
+
+static void
+port_event(LV2UI_Handle uih,
+           uint32_t port_index,
+           uint32_t buffer_size,
+           uint32_t format,
+           const void *buffer)
+{
+    xsynth_ui_t *ui = (xsynth_ui_t *)uih;
+}
+
+static LV2UI_Descriptor descriptor = {
+    XSYNTH_UI_URI, instantiate, cleanup, port_event, NULL
+};
+
+const LV2UI_Descriptor *lv2ui_descriptor(uint32_t index)
+{
+    switch (index) {
+      case 0:
+        return &descriptor;
+      default:
+        return NULL;
+    }
 }

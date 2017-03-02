@@ -64,6 +64,7 @@ extern GtkObject *bendrange_adj;
 
 extern GtkObject *voice_widget[];
 
+GtkWidget *create_patch_editor(void);
 void create_windows(const char *instance_tag);
 
 #endif /* _GUI_INTERFACE_H */

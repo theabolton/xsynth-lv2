@@ -143,29 +143,9 @@ create_voice_slider(GtkWidget *main_window, int index, GtkWidget *table,
     gtk_spin_button_set_update_policy (GTK_SPIN_BUTTON (spin), GTK_UPDATE_IF_VALID);
 }
 
-void
-create_main_window (const char *tag)
+GtkWidget *
+create_patch_editor(void)
 {
-  GtkWidget *vbox1;
-  GtkWidget *menubar1;
-  GtkWidget *file1;
-  GtkWidget *file1_menu;
-#if !GTK_CHECK_VERSION(2, 0, 0)
-  GtkAccelGroup *file1_menu_accels;
-  GtkAccelGroup *help1_menu_accels;
-#endif
-  GtkWidget *menu_open;
-  GtkWidget *menu_save;
-  GtkWidget *separator1;
-  GtkWidget *menu_quit;
-  GtkWidget *help1;
-  GtkWidget *help1_menu;
-  GtkWidget *menu_about;
-  GtkWidget *notebook1;
-  GtkWidget *scrolledwindow1;
-  GtkWidget *label45;
-  GtkWidget *label46;
-  GtkWidget *patches_tab_label;
   GtkWidget *patch_edit_table;
     GTK20SIZEGROUP *col1_sizegroup;
     GTK20SIZEGROUP *col2_sizegroup;
@@ -208,191 +188,7 @@ create_main_window (const char *tag)
   GtkWidget *vcf_mode_menu;
   GtkWidget *frame10;
   GtkWidget *volume_table;
-  GtkWidget *frame11;
-  GtkWidget *table14;
-  GtkWidget *test_note_frame;
-  GtkWidget *test_note_table;
-  GtkWidget *label10;
-  GtkWidget *test_note_button;
-  GtkWidget *test_note_key;
-  GtkWidget *test_note_velocity;
-  GtkWidget *frame13;
-  GtkWidget *table17;
-  GtkWidget *save_changes;
-  GtkWidget *label53;
-  GtkWidget *label54;
-  GtkWidget *patch_edit_tab_label;
-  GtkWidget *frame14;
-  GtkWidget *configuration_table;
-  GtkWidget *tuning_spin;
-  GtkWidget *polyphony;
-  GtkWidget *mono_mode_off;
-  GtkWidget *mono_mode_on;
-  GtkWidget *mono_mode_once;
-  GtkWidget *mono_mode_both;
-  GtkWidget *optionmenu5_menu;
-  GtkWidget *glide_mode_label;
-  GtkWidget *glide_mode_legato;
-  GtkWidget *glide_mode_initial;
-  GtkWidget *glide_mode_always;
-  GtkWidget *glide_mode_leftover;
-  GtkWidget *glide_mode_off;
-  GtkWidget *glide_menu;
-  GtkWidget *bendrange_label;
-  GtkWidget *bendrange;
-  GtkWidget *label43;
-  GtkWidget *label44;
-  GtkWidget *frame15;
-  GtkWidget *logo_pixmap;
-  GtkWidget *label47;
-  GtkWidget *configuration_tab_label;
-  GtkAccelGroup *accel_group;
     int i;
-
-  accel_group = gtk_accel_group_new ();
-
-  main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_object_set_data (GTK_OBJECT (main_window), "main_window", main_window);
-  gtk_window_set_title (GTK_WINDOW (main_window), tag);
-  gtk_widget_realize(main_window);  /* window must be realized for create_*_pixmap() */
-
-  vbox1 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_ref (vbox1);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "vbox1", vbox1,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (vbox1);
-  gtk_container_add (GTK_CONTAINER (main_window), vbox1);
-
-  menubar1 = gtk_menu_bar_new ();
-  gtk_widget_ref (menubar1);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "menubar1", menubar1,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (menubar1);
-  gtk_box_pack_start (GTK_BOX (vbox1), menubar1, FALSE, FALSE, 0);
-
-  file1 = gtk_menu_item_new_with_label ("File");
-  gtk_widget_ref (file1);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "file1", file1,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (file1);
-  gtk_container_add (GTK_CONTAINER (menubar1), file1);
-
-  file1_menu = gtk_menu_new ();
-  gtk_widget_ref (file1_menu);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "file1_menu", file1_menu,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (file1), file1_menu);
-#if !GTK_CHECK_VERSION(2, 0, 0)
-  file1_menu_accels = gtk_menu_ensure_uline_accel_group (GTK_MENU (file1_menu));
-#endif
-
-  menu_open = gtk_menu_item_new_with_label ("Open Patch Bank...");
-  gtk_widget_ref (menu_open);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "menu_open", menu_open,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (menu_open);
-  gtk_container_add (GTK_CONTAINER (file1_menu), menu_open);
-  gtk_widget_add_accelerator (menu_open, "activate", accel_group,
-                              GDK_O, GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
-
-  menu_save = gtk_menu_item_new_with_label ("Save Patch Bank...");
-  gtk_widget_ref (menu_save);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "menu_save", menu_save,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (menu_save);
-  gtk_container_add (GTK_CONTAINER (file1_menu), menu_save);
-  gtk_widget_add_accelerator (menu_save, "activate", accel_group,
-                              GDK_S, GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
-
-  separator1 = gtk_menu_item_new ();
-  gtk_widget_ref (separator1);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "separator1", separator1,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (separator1);
-  gtk_container_add (GTK_CONTAINER (file1_menu), separator1);
-  gtk_widget_set_sensitive (separator1, FALSE);
-
-  menu_quit = gtk_menu_item_new_with_label ("Quit");
-  gtk_widget_ref (menu_quit);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "menu_quit", menu_quit,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (menu_quit);
-  gtk_container_add (GTK_CONTAINER (file1_menu), menu_quit);
-  gtk_widget_add_accelerator (menu_quit, "activate", accel_group,
-                              GDK_Q, GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
-
-  help1 = gtk_menu_item_new_with_label ("About");
-  gtk_widget_ref (help1);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "help1", help1,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (help1);
-  gtk_container_add (GTK_CONTAINER (menubar1), help1);
-  gtk_menu_item_right_justify (GTK_MENU_ITEM (help1));
-
-  help1_menu = gtk_menu_new ();
-  gtk_widget_ref (help1_menu);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "help1_menu", help1_menu,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (help1), help1_menu);
-#if !GTK_CHECK_VERSION(2, 0, 0)
-  help1_menu_accels = gtk_menu_ensure_uline_accel_group (GTK_MENU (help1_menu));
-#endif
-
-  menu_about = gtk_menu_item_new_with_label ("About Xsynth-DSSI");
-  gtk_widget_ref (menu_about);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "menu_about", menu_about,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (menu_about);
-  gtk_container_add (GTK_CONTAINER (help1_menu), menu_about);
-
-  notebook1 = gtk_notebook_new ();
-  gtk_widget_ref (notebook1);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "notebook1", notebook1,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (notebook1);
-  gtk_box_pack_start (GTK_BOX (vbox1), notebook1, TRUE, TRUE, 0);
-
-  scrolledwindow1 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_ref (scrolledwindow1);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "scrolledwindow1", scrolledwindow1,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (scrolledwindow1);
-  gtk_container_add (GTK_CONTAINER (notebook1), scrolledwindow1);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow1), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-  patches_clist = gtk_clist_new (2);
-  gtk_widget_ref (patches_clist);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "patches_clist", patches_clist,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (patches_clist);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow1), patches_clist);
-  gtk_clist_set_column_width (GTK_CLIST (patches_clist), 0, 50);
-  gtk_clist_set_column_width (GTK_CLIST (patches_clist), 1, 80);
-  gtk_clist_column_titles_show (GTK_CLIST (patches_clist));
-
-  label45 = gtk_label_new ("Prog No");
-  gtk_widget_ref (label45);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "label45", label45,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (label45);
-  gtk_clist_set_column_widget (GTK_CLIST (patches_clist), 0, label45);
-
-  label46 = gtk_label_new ("Name");
-  gtk_widget_ref (label46);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "label46", label46,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (label46);
-  gtk_clist_set_column_widget (GTK_CLIST (patches_clist), 1, label46);
-
-  patches_tab_label = gtk_label_new ("Patches");
-  gtk_widget_ref (patches_tab_label);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "patches_tab_label", patches_tab_label,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (patches_tab_label);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), patches_tab_label);
 
     /* Patch Edit tab */
     for (i = 0; i <= XSYNTH_PORTS_LAST_PATCH_PORT; i++) voice_widget[i] = NULL;
@@ -401,8 +197,6 @@ create_main_window (const char *tag)
   gtk_widget_ref (patch_edit_table);
   gtk_object_set_data_full (GTK_OBJECT (main_window), "patch_edit_table", patch_edit_table,
                             (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (patch_edit_table);
-  gtk_container_add (GTK_CONTAINER (notebook1), patch_edit_table);
   gtk_container_set_border_width (GTK_CONTAINER (patch_edit_table), 6);
   gtk_table_set_row_spacings (GTK_TABLE (patch_edit_table), 7);
   gtk_table_set_col_spacings (GTK_TABLE (patch_edit_table), 7);
@@ -810,6 +604,324 @@ create_main_window (const char *tag)
 
     create_voice_slider(main_window, XSYNTH_PORT_VOLUME, volume_table, 0, 0, "volume", col3_sizegroup);
 
+    /* connect patch edit widgets */
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC1_PITCH]),
+                       "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                       (gpointer)XSYNTH_PORT_OSC1_PITCH);
+    gtk_signal_connect (GTK_OBJECT (osc1_waveform_adj), "value_changed",
+                        GTK_SIGNAL_FUNC (on_voice_detent_change),
+                        (gpointer)XSYNTH_PORT_OSC1_WAVEFORM);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC1_PULSEWIDTH]),
+                        "value_changed", GTK_SIGNAL_FUNC (on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_OSC1_PULSEWIDTH);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC2_PITCH]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_OSC2_PITCH);
+    gtk_signal_connect (GTK_OBJECT (osc2_waveform_adj), "value_changed",
+                        GTK_SIGNAL_FUNC (on_voice_detent_change),
+                        (gpointer)XSYNTH_PORT_OSC2_WAVEFORM);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC2_PULSEWIDTH]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_OSC2_PULSEWIDTH);
+    gtk_signal_connect (GTK_OBJECT (osc_sync), "toggled",
+                        GTK_SIGNAL_FUNC (on_voice_onoff_toggled),
+                        (gpointer)XSYNTH_PORT_OSC_SYNC);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC_BALANCE]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_OSC_BALANCE);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_LFO_FREQUENCY]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_LFO_FREQUENCY);
+    gtk_signal_connect (GTK_OBJECT (lfo_waveform_adj), "value_changed",
+                        GTK_SIGNAL_FUNC (on_voice_detent_change),
+                        (gpointer)XSYNTH_PORT_LFO_WAVEFORM);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_LFO_AMOUNT_O]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_LFO_AMOUNT_O);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_LFO_AMOUNT_F]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_LFO_AMOUNT_F);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_ATTACK_TIME]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG1_ATTACK_TIME);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_DECAY_TIME]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG1_DECAY_TIME);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_SUSTAIN_LEVEL]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG1_SUSTAIN_LEVEL);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_RELEASE_TIME]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG1_RELEASE_TIME);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_VEL_SENS]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG1_VEL_SENS);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_AMOUNT_O]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG1_AMOUNT_O);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_AMOUNT_F]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG1_AMOUNT_F);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_ATTACK_TIME]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG2_ATTACK_TIME);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_DECAY_TIME]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG2_DECAY_TIME);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_SUSTAIN_LEVEL]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG2_SUSTAIN_LEVEL);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_RELEASE_TIME]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG2_RELEASE_TIME);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_VEL_SENS]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG2_VEL_SENS);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_AMOUNT_O]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG2_AMOUNT_O);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_AMOUNT_F]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_EG2_AMOUNT_F);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_VCF_CUTOFF]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_VCF_CUTOFF);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_VCF_QRES]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_VCF_QRES);
+    gtk_signal_connect (GTK_OBJECT (vcf_mode_2pole), "activate",
+                        GTK_SIGNAL_FUNC (on_vcf_mode_activate),
+                        (gpointer)0);
+    gtk_signal_connect (GTK_OBJECT (vcf_mode_4pole), "activate",
+                        GTK_SIGNAL_FUNC (on_vcf_mode_activate),
+                        (gpointer)1);
+    gtk_signal_connect (GTK_OBJECT (vcf_mode_mvclpf), "activate",
+                        GTK_SIGNAL_FUNC (on_vcf_mode_activate),
+                        (gpointer)2);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_GLIDE_TIME]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_GLIDE_TIME);
+    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_VOLUME]),
+                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
+                        (gpointer)XSYNTH_PORT_VOLUME);
+
+    return patch_edit_table;
+}
+
+void
+create_main_window (const char *tag)
+{
+  GtkWidget *vbox1;
+  GtkWidget *menubar1;
+  GtkWidget *file1;
+  GtkWidget *file1_menu;
+#if !GTK_CHECK_VERSION(2, 0, 0)
+  GtkAccelGroup *file1_menu_accels;
+  GtkAccelGroup *help1_menu_accels;
+#endif
+  GtkWidget *menu_open;
+  GtkWidget *menu_save;
+  GtkWidget *separator1;
+  GtkWidget *menu_quit;
+  GtkWidget *help1;
+  GtkWidget *help1_menu;
+  GtkWidget *menu_about;
+  GtkWidget *notebook1;
+  GtkWidget *scrolledwindow1;
+  GtkWidget *label45;
+  GtkWidget *label46;
+  GtkWidget *patches_tab_label;
+  GtkWidget *patch_edit_table;
+  GtkWidget *frame11;
+  GtkWidget *table14;
+  GtkWidget *test_note_frame;
+  GtkWidget *test_note_table;
+  GtkWidget *label10;
+  GtkWidget *test_note_button;
+  GtkWidget *test_note_key;
+  GtkWidget *test_note_velocity;
+  GtkWidget *frame13;
+  GtkWidget *table17;
+  GtkWidget *save_changes;
+  GtkWidget *label53;
+  GtkWidget *label54;
+  GtkWidget *patch_edit_tab_label;
+  GtkWidget *frame14;
+  GtkWidget *configuration_table;
+  GtkWidget *tuning_spin;
+  GtkWidget *polyphony;
+  GtkWidget *mono_mode_off;
+  GtkWidget *mono_mode_on;
+  GtkWidget *mono_mode_once;
+  GtkWidget *mono_mode_both;
+  GtkWidget *optionmenu5_menu;
+  GtkWidget *glide_mode_label;
+  GtkWidget *glide_mode_legato;
+  GtkWidget *glide_mode_initial;
+  GtkWidget *glide_mode_always;
+  GtkWidget *glide_mode_leftover;
+  GtkWidget *glide_mode_off;
+  GtkWidget *glide_menu;
+  GtkWidget *bendrange_label;
+  GtkWidget *bendrange;
+  GtkWidget *label43;
+  GtkWidget *label44;
+  GtkWidget *frame15;
+  GtkWidget *logo_pixmap;
+  GtkWidget *label47;
+  GtkWidget *configuration_tab_label;
+  GtkAccelGroup *accel_group;
+
+  accel_group = gtk_accel_group_new ();
+
+  main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_object_set_data (GTK_OBJECT (main_window), "main_window", main_window);
+  gtk_window_set_title (GTK_WINDOW (main_window), tag);
+  gtk_widget_realize(main_window);  /* window must be realized for create_*_pixmap() */
+
+  vbox1 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_ref (vbox1);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "vbox1", vbox1,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (vbox1);
+  gtk_container_add (GTK_CONTAINER (main_window), vbox1);
+
+  menubar1 = gtk_menu_bar_new ();
+  gtk_widget_ref (menubar1);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "menubar1", menubar1,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (menubar1);
+  gtk_box_pack_start (GTK_BOX (vbox1), menubar1, FALSE, FALSE, 0);
+
+  file1 = gtk_menu_item_new_with_label ("File");
+  gtk_widget_ref (file1);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "file1", file1,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (file1);
+  gtk_container_add (GTK_CONTAINER (menubar1), file1);
+
+  file1_menu = gtk_menu_new ();
+  gtk_widget_ref (file1_menu);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "file1_menu", file1_menu,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (file1), file1_menu);
+#if !GTK_CHECK_VERSION(2, 0, 0)
+  file1_menu_accels = gtk_menu_ensure_uline_accel_group (GTK_MENU (file1_menu));
+#endif
+
+  menu_open = gtk_menu_item_new_with_label ("Open Patch Bank...");
+  gtk_widget_ref (menu_open);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "menu_open", menu_open,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (menu_open);
+  gtk_container_add (GTK_CONTAINER (file1_menu), menu_open);
+  gtk_widget_add_accelerator (menu_open, "activate", accel_group,
+                              GDK_O, GDK_CONTROL_MASK,
+                              GTK_ACCEL_VISIBLE);
+
+  menu_save = gtk_menu_item_new_with_label ("Save Patch Bank...");
+  gtk_widget_ref (menu_save);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "menu_save", menu_save,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (menu_save);
+  gtk_container_add (GTK_CONTAINER (file1_menu), menu_save);
+  gtk_widget_add_accelerator (menu_save, "activate", accel_group,
+                              GDK_S, GDK_CONTROL_MASK,
+                              GTK_ACCEL_VISIBLE);
+
+  separator1 = gtk_menu_item_new ();
+  gtk_widget_ref (separator1);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "separator1", separator1,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (separator1);
+  gtk_container_add (GTK_CONTAINER (file1_menu), separator1);
+  gtk_widget_set_sensitive (separator1, FALSE);
+
+  menu_quit = gtk_menu_item_new_with_label ("Quit");
+  gtk_widget_ref (menu_quit);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "menu_quit", menu_quit,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (menu_quit);
+  gtk_container_add (GTK_CONTAINER (file1_menu), menu_quit);
+  gtk_widget_add_accelerator (menu_quit, "activate", accel_group,
+                              GDK_Q, GDK_CONTROL_MASK,
+                              GTK_ACCEL_VISIBLE);
+
+  help1 = gtk_menu_item_new_with_label ("About");
+  gtk_widget_ref (help1);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "help1", help1,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (help1);
+  gtk_container_add (GTK_CONTAINER (menubar1), help1);
+  gtk_menu_item_right_justify (GTK_MENU_ITEM (help1));
+
+  help1_menu = gtk_menu_new ();
+  gtk_widget_ref (help1_menu);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "help1_menu", help1_menu,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (help1), help1_menu);
+#if !GTK_CHECK_VERSION(2, 0, 0)
+  help1_menu_accels = gtk_menu_ensure_uline_accel_group (GTK_MENU (help1_menu));
+#endif
+
+  menu_about = gtk_menu_item_new_with_label ("About Xsynth-DSSI");
+  gtk_widget_ref (menu_about);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "menu_about", menu_about,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (menu_about);
+  gtk_container_add (GTK_CONTAINER (help1_menu), menu_about);
+
+  notebook1 = gtk_notebook_new ();
+  gtk_widget_ref (notebook1);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "notebook1", notebook1,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (notebook1);
+  gtk_box_pack_start (GTK_BOX (vbox1), notebook1, TRUE, TRUE, 0);
+
+  scrolledwindow1 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_ref (scrolledwindow1);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "scrolledwindow1", scrolledwindow1,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (scrolledwindow1);
+  gtk_container_add (GTK_CONTAINER (notebook1), scrolledwindow1);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow1), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+  patches_clist = gtk_clist_new (2);
+  gtk_widget_ref (patches_clist);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "patches_clist", patches_clist,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (patches_clist);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow1), patches_clist);
+  gtk_clist_set_column_width (GTK_CLIST (patches_clist), 0, 50);
+  gtk_clist_set_column_width (GTK_CLIST (patches_clist), 1, 80);
+  gtk_clist_column_titles_show (GTK_CLIST (patches_clist));
+
+  label45 = gtk_label_new ("Prog No");
+  gtk_widget_ref (label45);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "label45", label45,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (label45);
+  gtk_clist_set_column_widget (GTK_CLIST (patches_clist), 0, label45);
+
+  label46 = gtk_label_new ("Name");
+  gtk_widget_ref (label46);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "label46", label46,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (label46);
+  gtk_clist_set_column_widget (GTK_CLIST (patches_clist), 1, label46);
+
+  patches_tab_label = gtk_label_new ("Patches");
+  gtk_widget_ref (patches_tab_label);
+  gtk_object_set_data_full (GTK_OBJECT (main_window), "patches_tab_label", patches_tab_label,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (patches_tab_label);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), patches_tab_label);
+
+    /* Patch Edit tab */
+    patch_edit_table = create_patch_editor();
+  gtk_widget_show (patch_edit_table);
+  gtk_container_add (GTK_CONTAINER (notebook1), patch_edit_table);
+
   frame11 = gtk_frame_new ("NAME");
   gtk_widget_ref (frame11);
   gtk_object_set_data_full (GTK_OBJECT (main_window), "frame11", frame11,
@@ -1152,107 +1264,6 @@ create_main_window (const char *tag)
     gtk_signal_connect(GTK_OBJECT(patches_clist), "select_row",
                        GTK_SIGNAL_FUNC(on_patches_selection),
                        NULL);
-
-    /* connect patch edit widgets */
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC1_PITCH]),
-                       "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                       (gpointer)XSYNTH_PORT_OSC1_PITCH);
-    gtk_signal_connect (GTK_OBJECT (osc1_waveform_adj), "value_changed",
-                        GTK_SIGNAL_FUNC (on_voice_detent_change),
-                        (gpointer)XSYNTH_PORT_OSC1_WAVEFORM);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC1_PULSEWIDTH]),
-                        "value_changed", GTK_SIGNAL_FUNC (on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_OSC1_PULSEWIDTH);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC2_PITCH]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_OSC2_PITCH);
-    gtk_signal_connect (GTK_OBJECT (osc2_waveform_adj), "value_changed",
-                        GTK_SIGNAL_FUNC (on_voice_detent_change),
-                        (gpointer)XSYNTH_PORT_OSC2_WAVEFORM);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC2_PULSEWIDTH]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_OSC2_PULSEWIDTH);
-    gtk_signal_connect (GTK_OBJECT (osc_sync), "toggled",
-                        GTK_SIGNAL_FUNC (on_voice_onoff_toggled),
-                        (gpointer)XSYNTH_PORT_OSC_SYNC);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC_BALANCE]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_OSC_BALANCE);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_LFO_FREQUENCY]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_LFO_FREQUENCY);
-    gtk_signal_connect (GTK_OBJECT (lfo_waveform_adj), "value_changed",
-                        GTK_SIGNAL_FUNC (on_voice_detent_change),
-                        (gpointer)XSYNTH_PORT_LFO_WAVEFORM);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_LFO_AMOUNT_O]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_LFO_AMOUNT_O);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_LFO_AMOUNT_F]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_LFO_AMOUNT_F);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_ATTACK_TIME]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG1_ATTACK_TIME);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_DECAY_TIME]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG1_DECAY_TIME);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_SUSTAIN_LEVEL]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG1_SUSTAIN_LEVEL);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_RELEASE_TIME]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG1_RELEASE_TIME);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_VEL_SENS]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG1_VEL_SENS);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_AMOUNT_O]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG1_AMOUNT_O);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG1_AMOUNT_F]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG1_AMOUNT_F);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_ATTACK_TIME]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG2_ATTACK_TIME);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_DECAY_TIME]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG2_DECAY_TIME);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_SUSTAIN_LEVEL]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG2_SUSTAIN_LEVEL);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_RELEASE_TIME]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG2_RELEASE_TIME);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_VEL_SENS]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG2_VEL_SENS);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_AMOUNT_O]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG2_AMOUNT_O);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_EG2_AMOUNT_F]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_EG2_AMOUNT_F);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_VCF_CUTOFF]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_VCF_CUTOFF);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_VCF_QRES]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_VCF_QRES);
-    gtk_signal_connect (GTK_OBJECT (vcf_mode_2pole), "activate",
-                        GTK_SIGNAL_FUNC (on_vcf_mode_activate),
-                        (gpointer)0);
-    gtk_signal_connect (GTK_OBJECT (vcf_mode_4pole), "activate",
-                        GTK_SIGNAL_FUNC (on_vcf_mode_activate),
-                        (gpointer)1);
-    gtk_signal_connect (GTK_OBJECT (vcf_mode_mvclpf), "activate",
-                        GTK_SIGNAL_FUNC (on_vcf_mode_activate),
-                        (gpointer)2);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_GLIDE_TIME]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_GLIDE_TIME);
-    gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_VOLUME]),
-                        "value_changed", GTK_SIGNAL_FUNC(on_voice_slider_change),
-                        (gpointer)XSYNTH_PORT_VOLUME);
 
     /* connect test note widgets */
     gtk_signal_connect (GTK_OBJECT (gtk_range_get_adjustment (GTK_RANGE (test_note_key))),

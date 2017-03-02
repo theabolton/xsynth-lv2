@@ -438,7 +438,7 @@ instantiate(const LV2UI_Descriptor *descriptor,
 
     // uris->atom_Float = map->map(map->handle, LV2_ATOM__Float);
 
-    *widget = gtk_label_new("Yes!");
+    *widget = create_patch_editor();
 
     return ui;
 }

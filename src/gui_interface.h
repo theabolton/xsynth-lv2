@@ -50,9 +50,9 @@ extern GtkWidget *notice_label_2;
 
 extern GtkWidget *patches_clist;
 
-extern GtkWidget *osc1_waveform_pixmap;
-extern GtkWidget *osc2_waveform_pixmap;
-extern GtkWidget *lfo_waveform_pixmap;
+extern GtkWidget *osc1_waveform_image;
+extern GtkWidget *osc2_waveform_image;
+extern GtkWidget *lfo_waveform_image;
 
 extern GtkWidget *name_entry;
 

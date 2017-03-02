@@ -346,7 +346,7 @@ on_patches_selection(GtkWidget      *clist,
 void
 on_voice_slider_change( GtkWidget *widget, gpointer data )
 {
-    int index = (int)data;
+    int index = GPOINTER_TO_INT(data);
     struct xsynth_port_descriptor *xpd = &xsynth_port_description[index];
     float cval = GTK_ADJUSTMENT(widget)->value / 10.0f;
     float value;
@@ -369,7 +369,7 @@ on_voice_slider_change( GtkWidget *widget, gpointer data )
     GDB_MESSAGE(GDB_GUI, " on_voice_slider_change: slider %d changed to %10.6f => %10.6f\n",
             index, GTK_ADJUSTMENT(widget)->value, value);
 
-    lo_send(osc_host_address, osc_control_path, "if", index, value);
+    // lo_send(osc_host_address, osc_control_path, "if", index, value);
 }
 
 void
@@ -596,15 +596,15 @@ update_detent_label(int index, int value)
 {
     switch (index) {
       case XSYNTH_PORT_OSC1_WAVEFORM:
-        set_waveform_pixmap(osc1_waveform_pixmap, value);
+        set_waveform_image(osc1_waveform_image, value);
         break;
 
       case XSYNTH_PORT_OSC2_WAVEFORM:
-        set_waveform_pixmap(osc2_waveform_pixmap, value);
+        set_waveform_image(osc2_waveform_image, value);
         break;
 
       case XSYNTH_PORT_LFO_WAVEFORM:
-        set_waveform_pixmap(lfo_waveform_pixmap, value);
+        set_waveform_image(lfo_waveform_image, value);
         break;
 
       default:

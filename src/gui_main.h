@@ -26,6 +26,7 @@
 #endif
 
 #include <lo/lo.h>
+#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 #include "xsynth_types.h"
 
@@ -49,6 +50,7 @@ extern char           *project_directory;
 typedef struct _xsynth_ui_t xsynth_ui_t;
 
 struct _xsynth_ui_t {
+    LV2UI_Write_Function write_function;
 };
 
 #endif /* _GUI_MAIN_H */

@@ -63,9 +63,9 @@ GtkWidget *notice_label_2;
 
 GtkWidget *patches_clist;
 
-GtkWidget *osc1_waveform_pixmap;
-GtkWidget *osc2_waveform_pixmap;
-GtkWidget *lfo_waveform_pixmap;
+GtkWidget *osc1_waveform_image;
+GtkWidget *osc2_waveform_image;
+GtkWidget *lfo_waveform_image;
 
 GtkWidget *name_entry;
 
@@ -101,9 +101,6 @@ create_voice_slider(GtkWidget *main_window, int index, GtkWidget *table,
     GtkObject *adjustment;
 
     label = gtk_label_new (text);
-    gtk_widget_ref (label);
-    gtk_object_set_data_full (GTK_OBJECT (main_window), text, label,
-                              (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, column, column + 1,
                       row, row + 1, (GtkAttachOptions) (GTK_FILL),
@@ -118,9 +115,6 @@ create_voice_slider(GtkWidget *main_window, int index, GtkWidget *table,
     voice_widget[index] = adjustment;
 
     knob = gtk_knob_new (GTK_ADJUSTMENT (adjustment));
-    gtk_widget_ref (knob);
-    gtk_object_set_data_full (GTK_OBJECT (main_window), text, knob,
-                              (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (knob);
     gtk_table_attach (GTK_TABLE (table), knob, column + 1, column + 2,
                       row, row + 1, (GtkAttachOptions) (GTK_FILL),
@@ -132,9 +126,6 @@ create_voice_slider(GtkWidget *main_window, int index, GtkWidget *table,
 #else
     gtk_widget_set_usize(spin, 60, -2); // Ack, should be based on font size....
 #endif
-    gtk_widget_ref (spin);
-    gtk_object_set_data_full (GTK_OBJECT (main_window), text, spin,
-                              (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (spin);
     gtk_table_attach (GTK_TABLE (table), spin, column + 2, column + 3,
                       row, row + 1, (GtkAttachOptions) (GTK_FILL),
@@ -194,9 +185,6 @@ create_patch_editor(void)
     for (i = 0; i <= XSYNTH_PORTS_LAST_PATCH_PORT; i++) voice_widget[i] = NULL;
 
   patch_edit_table = gtk_table_new (5, 3, FALSE);
-  gtk_widget_ref (patch_edit_table);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "patch_edit_table", patch_edit_table,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_container_set_border_width (GTK_CONTAINER (patch_edit_table), 6);
   gtk_table_set_row_spacings (GTK_TABLE (patch_edit_table), 7);
   gtk_table_set_col_spacings (GTK_TABLE (patch_edit_table), 7);
@@ -208,18 +196,12 @@ create_patch_editor(void)
 #endif
 
   frame2 = gtk_frame_new ("VCO1");
-  gtk_widget_ref (frame2);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "frame2", frame2,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (frame2);
   gtk_table_attach (GTK_TABLE (patch_edit_table), frame2, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
   osc1_table = gtk_table_new (3, 2, FALSE);
-  gtk_widget_ref (osc1_table);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "osc1_table", osc1_table,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (osc1_table);
   gtk_container_add (GTK_CONTAINER (frame2), osc1_table);
   gtk_container_set_border_width (GTK_CONTAINER (osc1_table), 2);
@@ -227,9 +209,6 @@ create_patch_editor(void)
   gtk_table_set_col_spacings (GTK_TABLE (osc1_table), 5);
 
   label14 = gtk_label_new ("waveform");
-  gtk_widget_ref (label14);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "label14", label14,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (label14);
   gtk_table_attach (GTK_TABLE (osc1_table), label14, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -237,29 +216,20 @@ create_patch_editor(void)
   gtk_misc_set_alignment (GTK_MISC (label14), 0, 0.5);
 
   hbox1 = gtk_hbox_new (FALSE, 10);
-  gtk_widget_ref (hbox1);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "hbox1", hbox1,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (hbox1);
   gtk_table_attach (GTK_TABLE (osc1_table), hbox1, 1, 3, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-    create_waveform_gdk_pixmaps(main_window);
+    create_waveform_gdk_pixbufs();
 
-    osc1_waveform_pixmap = create_waveform_pixmap(main_window);
-    gtk_widget_ref (osc1_waveform_pixmap);
-    gtk_object_set_data_full (GTK_OBJECT (main_window), "osc1_waveform_pixmap", osc1_waveform_pixmap,
-                              (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (osc1_waveform_pixmap);
-    gtk_box_pack_start (GTK_BOX (hbox1), osc1_waveform_pixmap, FALSE, TRUE, 0);
+    osc1_waveform_image = create_waveform_gtk_image();
+    gtk_widget_show (osc1_waveform_image);
+    gtk_box_pack_start (GTK_BOX (hbox1), osc1_waveform_image, FALSE, TRUE, 0);
 
     osc1_waveform_adj = gtk_adjustment_new (0, 0, 6, 1, 1, 0);
     voice_widget[XSYNTH_PORT_OSC1_WAVEFORM] = osc1_waveform_adj;
   osc1_waveform_spin = gtk_spin_button_new (GTK_ADJUSTMENT (osc1_waveform_adj), 1, 0);
-  gtk_widget_ref (osc1_waveform_spin);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "osc1_waveform_spin", osc1_waveform_spin,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (osc1_waveform_spin);
   gtk_box_pack_start (GTK_BOX (hbox1), osc1_waveform_spin, FALSE, FALSE, 0);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (osc1_waveform_spin), TRUE);
@@ -274,18 +244,12 @@ create_patch_editor(void)
     create_voice_slider(main_window, XSYNTH_PORT_OSC1_PULSEWIDTH, osc1_table, 0, 2, "pw/slope", col1_sizegroup);
 
   frame3 = gtk_frame_new ("VCO2");
-  gtk_widget_ref (frame3);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "frame3", frame3,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (frame3);
   gtk_table_attach (GTK_TABLE (patch_edit_table), frame3, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   osc2_table = gtk_table_new (4, 3, FALSE);
-  gtk_widget_ref (osc2_table);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "osc2_table", osc2_table,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (osc2_table);
   gtk_container_add (GTK_CONTAINER (frame3), osc2_table);
   gtk_container_set_border_width (GTK_CONTAINER (osc2_table), 2);
@@ -293,9 +257,6 @@ create_patch_editor(void)
   gtk_table_set_col_spacings (GTK_TABLE (osc2_table), 5);
 
   label17 = gtk_label_new ("waveform");
-  gtk_widget_ref (label17);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "label17", label17,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (label17);
   gtk_table_attach (GTK_TABLE (osc2_table), label17, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -303,9 +264,6 @@ create_patch_editor(void)
   gtk_misc_set_alignment (GTK_MISC (label17), 0, 0.5);
 
   label19 = gtk_label_new ("osc sync");
-  gtk_widget_ref (label19);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "label19", label19,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (label19);
   gtk_table_attach (GTK_TABLE (osc2_table), label19, 0, 1, 3, 4,
                     (GtkAttachOptions) (GTK_FILL),
@@ -314,36 +272,24 @@ create_patch_editor(void)
 
     osc_sync = gtk_check_button_new ();
     voice_widget[XSYNTH_PORT_OSC_SYNC] = (GtkObject *)osc_sync;
-  gtk_widget_ref (osc_sync);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "osc_sync", osc_sync,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (osc_sync);
   gtk_table_attach (GTK_TABLE (osc2_table), osc_sync, 1, 3, 3, 4,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
   hbox2 = gtk_hbox_new (FALSE, 10);
-  gtk_widget_ref (hbox2);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "hbox2", hbox2,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (hbox2);
   gtk_table_attach (GTK_TABLE (osc2_table), hbox2, 1, 3, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-    osc2_waveform_pixmap = create_waveform_pixmap(main_window);
-    gtk_widget_ref (osc2_waveform_pixmap);
-    gtk_object_set_data_full (GTK_OBJECT (main_window), "osc2_waveform_pixmap", osc2_waveform_pixmap,
-                              (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (osc2_waveform_pixmap);
-    gtk_box_pack_start (GTK_BOX (hbox2), osc2_waveform_pixmap, FALSE, TRUE, 0);
+    osc2_waveform_image = create_waveform_gtk_image();
+    gtk_widget_show (osc2_waveform_image);
+    gtk_box_pack_start (GTK_BOX (hbox2), osc2_waveform_image, FALSE, TRUE, 0);
 
     osc2_waveform_adj = gtk_adjustment_new (0, 0, 6, 1, 1, 0);
     voice_widget[XSYNTH_PORT_OSC2_WAVEFORM] = osc2_waveform_adj;
   osc2_waveform_spin = gtk_spin_button_new (GTK_ADJUSTMENT (osc2_waveform_adj), 1, 0);
-  gtk_widget_ref (osc2_waveform_spin);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "osc2_waveform_spin", osc2_waveform_spin,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (osc2_waveform_spin);
   gtk_box_pack_start (GTK_BOX (hbox2), osc2_waveform_spin, FALSE, FALSE, 0);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (osc2_waveform_spin), TRUE);
@@ -358,18 +304,12 @@ create_patch_editor(void)
     create_voice_slider(main_window, XSYNTH_PORT_OSC2_PULSEWIDTH, osc2_table, 0, 2, "pw/slope", col2_sizegroup);
 
   frame4 = gtk_frame_new ("LFO");
-  gtk_widget_ref (frame4);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "frame4", frame4,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (frame4);
   gtk_table_attach (GTK_TABLE (patch_edit_table), frame4, 2, 3, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   lfo_table = gtk_table_new (4, 2, FALSE);
-  gtk_widget_ref (lfo_table);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "lfo_table", lfo_table,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (lfo_table);
   gtk_container_add (GTK_CONTAINER (frame4), lfo_table);
   gtk_container_set_border_width (GTK_CONTAINER (lfo_table), 2);
@@ -377,9 +317,6 @@ create_patch_editor(void)
   gtk_table_set_col_spacings (GTK_TABLE (lfo_table), 5);
 
   label21 = gtk_label_new ("waveform");
-  gtk_widget_ref (label21);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "label21", label21,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (label21);
   gtk_table_attach (GTK_TABLE (lfo_table), label21, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -387,27 +324,18 @@ create_patch_editor(void)
   gtk_misc_set_alignment (GTK_MISC (label21), 0, 0.5);
 
   hbox3 = gtk_hbox_new (FALSE, 10);
-  gtk_widget_ref (hbox3);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "hbox3", hbox3,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (hbox3);
   gtk_table_attach (GTK_TABLE (lfo_table), hbox3, 1, 3, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-    lfo_waveform_pixmap = create_waveform_pixmap(main_window);
-    gtk_widget_ref (lfo_waveform_pixmap);
-    gtk_object_set_data_full (GTK_OBJECT (main_window), "lfo_waveform_pixmap", lfo_waveform_pixmap,
-                              (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (lfo_waveform_pixmap);
-    gtk_box_pack_start (GTK_BOX (hbox3), lfo_waveform_pixmap, FALSE, TRUE, 0);
+    lfo_waveform_image = create_waveform_gtk_image();
+    gtk_widget_show (lfo_waveform_image);
+    gtk_box_pack_start (GTK_BOX (hbox3), lfo_waveform_image, FALSE, TRUE, 0);
 
     lfo_waveform_adj = gtk_adjustment_new (0, 0, 5, 1, 1, 0);
     voice_widget[XSYNTH_PORT_LFO_WAVEFORM] = lfo_waveform_adj;
   lfo_waveform_spin = gtk_spin_button_new (GTK_ADJUSTMENT (lfo_waveform_adj), 1, 0);
-  gtk_widget_ref (lfo_waveform_spin);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "lfo_waveform_spin", lfo_waveform_spin,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (lfo_waveform_spin);
   gtk_box_pack_start (GTK_BOX (hbox3), lfo_waveform_spin, FALSE, FALSE, 0);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (lfo_waveform_spin), TRUE);
@@ -422,18 +350,12 @@ create_patch_editor(void)
     create_voice_slider(main_window, XSYNTH_PORT_LFO_AMOUNT_F, lfo_table, 0, 3, "filter mod", col3_sizegroup);
 
   frame5 = gtk_frame_new ("MIXER");
-  gtk_widget_ref (frame5);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "frame5", frame5,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (frame5);
   gtk_table_attach (GTK_TABLE (patch_edit_table), frame5, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   mixer_table = gtk_table_new (1, 2, FALSE);
-  gtk_widget_ref (mixer_table);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "mixer_table", mixer_table,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (mixer_table);
   gtk_container_add (GTK_CONTAINER (frame5), mixer_table);
   gtk_container_set_border_width (GTK_CONTAINER (mixer_table), 2);
@@ -443,18 +365,12 @@ create_patch_editor(void)
     create_voice_slider(main_window, XSYNTH_PORT_OSC_BALANCE, mixer_table, 0, 0, "balance", col1_sizegroup);
 
   frame6 = gtk_frame_new ("PORTAMENTO");
-  gtk_widget_ref (frame6);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "frame6", frame6,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (frame6);
   gtk_table_attach (GTK_TABLE (patch_edit_table), frame6, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   port_table = gtk_table_new (1, 2, FALSE);
-  gtk_widget_ref (port_table);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "port_table", port_table,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (port_table);
   gtk_container_add (GTK_CONTAINER (frame6), port_table);
   gtk_container_set_border_width (GTK_CONTAINER (port_table), 2);
@@ -464,18 +380,12 @@ create_patch_editor(void)
     create_voice_slider(main_window, XSYNTH_PORT_GLIDE_TIME, port_table, 0, 0, "glide time", col2_sizegroup);
 
   frame7 = gtk_frame_new ("EG1 (VCA)");
-  gtk_widget_ref (frame7);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "frame7", frame7,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (frame7);
   gtk_table_attach (GTK_TABLE (patch_edit_table), frame7, 0, 1, 2, 5,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
   eg1_table = gtk_table_new (7, 2, FALSE);
-  gtk_widget_ref (eg1_table);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "eg1_table", eg1_table,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (eg1_table);
   gtk_container_add (GTK_CONTAINER (frame7), eg1_table);
   gtk_container_set_border_width (GTK_CONTAINER (eg1_table), 2);
@@ -497,18 +407,12 @@ create_patch_editor(void)
     create_voice_slider(main_window, XSYNTH_PORT_EG1_AMOUNT_F, eg1_table, 0, 6, "filter mod", col1_sizegroup);
 
   frame8 = gtk_frame_new ("EG2");
-  gtk_widget_ref (frame8);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "frame8", frame8,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (frame8);
   gtk_table_attach (GTK_TABLE (patch_edit_table), frame8, 1, 2, 2, 5,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   eg2_table = gtk_table_new (7, 2, FALSE);
-  gtk_widget_ref (eg2_table);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "eg2_table", eg2_table,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (eg2_table);
   gtk_container_add (GTK_CONTAINER (frame8), eg2_table);
   gtk_container_set_border_width (GTK_CONTAINER (eg2_table), 2);
@@ -530,18 +434,12 @@ create_patch_editor(void)
     create_voice_slider(main_window, XSYNTH_PORT_EG2_AMOUNT_F, eg2_table, 0, 6, "filter mod", col2_sizegroup);
 
   frame9 = gtk_frame_new ("VCF");
-  gtk_widget_ref (frame9);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "frame9", frame9,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (frame9);
   gtk_table_attach (GTK_TABLE (patch_edit_table), frame9, 2, 3, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
   vcf_table = gtk_table_new (3, 2, FALSE);
-  gtk_widget_ref (vcf_table);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "vcf_table", vcf_table,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (vcf_table);
   gtk_container_add (GTK_CONTAINER (frame9), vcf_table);
   gtk_container_set_border_width (GTK_CONTAINER (vcf_table), 2);
@@ -549,9 +447,6 @@ create_patch_editor(void)
   gtk_table_set_col_spacings (GTK_TABLE (vcf_table), 5);
 
   label40 = gtk_label_new ("mode");
-  gtk_widget_ref (label40);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "label40", label40,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (label40);
   gtk_table_attach (GTK_TABLE (vcf_table), label40, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
@@ -560,9 +455,6 @@ create_patch_editor(void)
 
     vcf_mode_option_menu = gtk_option_menu_new ();
     voice_widget[XSYNTH_PORT_VCF_MODE] = (GtkObject *)vcf_mode_option_menu;
-    gtk_widget_ref (vcf_mode_option_menu);
-    gtk_object_set_data_full (GTK_OBJECT (main_window), "vcf_mode_option_menu", vcf_mode_option_menu,
-                              (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (vcf_mode_option_menu);
     gtk_table_attach (GTK_TABLE (vcf_table), vcf_mode_option_menu, 1, 3, 2, 3,
                       (GtkAttachOptions) (GTK_FILL),
@@ -584,18 +476,12 @@ create_patch_editor(void)
     create_voice_slider(main_window, XSYNTH_PORT_VCF_QRES, vcf_table, 0, 1, "resonance", col3_sizegroup);
 
   frame10 = gtk_frame_new ("VOLUME");
-  gtk_widget_ref (frame10);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "frame10", frame10,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (frame10);
   gtk_table_attach (GTK_TABLE (patch_edit_table), frame10, 2, 3, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   volume_table = gtk_table_new (1, 2, FALSE);
-  gtk_widget_ref (volume_table);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "volume_table", volume_table,
-                            (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (volume_table);
   gtk_container_add (GTK_CONTAINER (frame10), volume_table);
   gtk_container_set_border_width (GTK_CONTAINER (volume_table), 2);
@@ -767,7 +653,7 @@ create_main_window (const char *tag)
   GtkWidget *label43;
   GtkWidget *label44;
   GtkWidget *frame15;
-  GtkWidget *logo_pixmap;
+  GtkWidget *logo_image;
   GtkWidget *label47;
   GtkWidget *configuration_tab_label;
   GtkAccelGroup *accel_group;
@@ -777,7 +663,6 @@ create_main_window (const char *tag)
   main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_object_set_data (GTK_OBJECT (main_window), "main_window", main_window);
   gtk_window_set_title (GTK_WINDOW (main_window), tag);
-  gtk_widget_realize(main_window);  /* window must be realized for create_*_pixmap() */
 
   vbox1 = gtk_vbox_new (FALSE, 0);
   gtk_widget_ref (vbox1);
@@ -1143,13 +1028,10 @@ create_main_window (const char *tag)
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (GTK_EXPAND), 0, 0);
 
-  logo_pixmap = create_logo_pixmap (main_window);
-  gtk_widget_ref (logo_pixmap);
-  gtk_object_set_data_full (GTK_OBJECT (main_window), "logo_pixmap", logo_pixmap,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (logo_pixmap);
-  gtk_container_add (GTK_CONTAINER (frame15), logo_pixmap);
-  gtk_misc_set_padding (GTK_MISC (logo_pixmap), 2, 2);
+  logo_image = create_logo_image();
+  gtk_widget_show (logo_image);
+  gtk_container_add (GTK_CONTAINER (frame15), logo_image);
+  gtk_misc_set_padding (GTK_MISC (logo_image), 2, 2);
 
   label47 = gtk_label_new ("     ");
   gtk_widget_ref (label47);
@@ -1330,13 +1212,12 @@ create_about_window (const char *tag)
 {
     GtkWidget *frame1;
     GtkWidget *vbox2;
-    GtkWidget *about_pixmap;
+    GtkWidget *about_image;
     GtkWidget *closeabout;
 
     about_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_object_set_data (GTK_OBJECT (about_window), "about_window", about_window);
     gtk_window_set_title (GTK_WINDOW (about_window), "About Xsynth-DSSI");
-    gtk_widget_realize(about_window);  /* window must be realized for create_about_pixmap() */
 
     vbox2 = gtk_vbox_new (FALSE, 0);
     gtk_widget_ref (vbox2);
@@ -1352,13 +1233,10 @@ create_about_window (const char *tag)
     gtk_widget_show (frame1);
     gtk_box_pack_start (GTK_BOX (vbox2), frame1, FALSE, FALSE, 0);
 
-    about_pixmap = (GtkWidget *)create_about_pixmap (about_window);
-    gtk_widget_ref (about_pixmap);
-    gtk_object_set_data_full (GTK_OBJECT (about_window), "about_pixmap", about_pixmap,
-                              (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (about_pixmap);
-    gtk_container_add (GTK_CONTAINER (frame1), about_pixmap);
-    gtk_misc_set_padding (GTK_MISC (about_pixmap), 5, 5);
+    about_image = create_about_image();
+    gtk_widget_show (about_image);
+    gtk_container_add (GTK_CONTAINER (frame1), about_image);
+    gtk_misc_set_padding (GTK_MISC (about_image), 5, 5);
 
     about_label = gtk_label_new ("Some message\ngoes here");
     gtk_widget_ref (about_label);

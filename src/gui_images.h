@@ -28,12 +28,12 @@
 #include <gtk/gtk.h>
 
 /* gui_images.c */
-GtkWidget *create_about_pixmap(GtkWidget *window);
-GtkWidget *create_logo_pixmap(GtkWidget *window);
+GtkWidget *create_about_image(void);
+GtkWidget *create_logo_image(void);
 
-void       create_waveform_gdk_pixmaps(GtkWidget *widget);
-void       free_waveform_gdk_pixmaps(void);
-GtkWidget* create_waveform_pixmap(GtkWidget *widget);
-void       set_waveform_pixmap(GtkWidget *widget, int waveform);
+void       create_waveform_gdk_pixbufs(void);
+void       free_waveform_gdk_pixbufs(void);
+GtkWidget* create_waveform_gtk_image(void);
+void       set_waveform_image(GtkWidget *widget, int waveform);
 
 #endif /* _GUI_IMAGES_H */

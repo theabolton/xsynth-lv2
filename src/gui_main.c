@@ -40,6 +40,7 @@
 #include "xsynth.h"
 #include "gui_main.h"
 #include "gui_callbacks.h"
+#include "gui_images.h"
 #include "gui_interface.h"
 #include "gui_data.h"
 
@@ -424,6 +425,8 @@ instantiate(const LV2UI_Descriptor *descriptor,
     int i;
     LV2_URID_Map *map = NULL;
     xsynth_ui_t *ui;
+    GtkWidget *patch_edit_table;
+    GtkWidget *logo_image;
 
     for (i = 0; features[i]; i++) {
         if (!strcmp(features[i]->URI, LV2_URID__map)) {
@@ -438,7 +441,14 @@ instantiate(const LV2UI_Descriptor *descriptor,
 
     // uris->atom_Float = map->map(map->handle, LV2_ATOM__Float);
 
-    *widget = create_patch_editor();
+    patch_edit_table = create_patch_editor();
+    logo_image = create_logo_image();
+    gtk_widget_show (logo_image);
+    gtk_table_attach (GTK_TABLE (patch_edit_table), logo_image, 2, 3, 3, 4,
+                      (GtkAttachOptions) (GTK_EXPAND), (GtkAttachOptions) (GTK_EXPAND),
+                      0, 0);
+
+    *widget = patch_edit_table;
 
     return ui;
 }

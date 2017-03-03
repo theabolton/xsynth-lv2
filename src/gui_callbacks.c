@@ -644,8 +644,9 @@ update_voice_widget(int port, float value)
     internal_gui_update_only = 1;
 
     if (port == XSYNTH_PORT_TUNING) {  /* handle tuning specially, since it's not stored in patch */
-        (GTK_ADJUSTMENT(tuning_adj))->value = value;
-        gtk_signal_emit_by_name (tuning_adj, "value_changed");  /* causes call to on_tuning_change callback */
+        // !FIX! not yet implemented in LV2 version
+        //(GTK_ADJUSTMENT(tuning_adj))->value = value;
+        //gtk_signal_emit_by_name (tuning_adj, "value_changed");  /* causes call to on_tuning_change callback */
 
         internal_gui_update_only = 0;
         return;

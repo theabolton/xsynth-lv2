@@ -471,6 +471,14 @@ port_event(LV2UI_Handle uih,
            const void *buffer)
 {
     xsynth_ui_t *ui = (xsynth_ui_t *)uih;
+
+    if (format == 0) {
+        float value = *(float *)buffer;
+
+        GDB_MESSAGE(GDB_GUI, " port_event: control %d now %f\n", port_index, value);
+
+        update_voice_widget(port_index, value);
+    }
 }
 
 static LV2UI_Descriptor descriptor = {

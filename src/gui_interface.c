@@ -77,6 +77,8 @@ GtkObject *bendrange_adj;
 
 GtkObject *voice_widget[XSYNTH_PORTS_LAST_PATCH_PORT + 1];
 
+GQuark ui_quark;
+
 #if GTK_CHECK_VERSION(2, 0, 0)
 #define GTK20SIZEGROUP  GtkSizeGroup
 #else
@@ -93,7 +95,7 @@ GtkObject *voice_widget[XSYNTH_PORTS_LAST_PATCH_PORT + 1];
  *                                     table1, 0, 0, "pitch", sizegroup);
  */
 static void
-create_voice_slider(GtkWidget *main_window, int index, GtkWidget *table,
+create_voice_slider(void *ui, int index, GtkWidget *table,
                     gint column, gint row, const char *text,
                     GTK20SIZEGROUP *labelgroup)
 {
@@ -113,6 +115,8 @@ create_voice_slider(GtkWidget *main_window, int index, GtkWidget *table,
 
     adjustment = gtk_adjustment_new (0, 0, 10, 0.005, 1, 0);
     voice_widget[index] = adjustment;
+    if (ui)
+        g_object_set_qdata(G_OBJECT(adjustment), ui_quark, ui);
 
     knob = gtk_knob_new (GTK_ADJUSTMENT (adjustment));
     gtk_widget_show (knob);
@@ -135,7 +139,7 @@ create_voice_slider(GtkWidget *main_window, int index, GtkWidget *table,
 }
 
 GtkWidget *
-create_patch_editor(void)
+create_patch_editor(void *ui)
 {
   GtkWidget *patch_edit_table;
     GTK20SIZEGROUP *col1_sizegroup;
@@ -228,6 +232,7 @@ create_patch_editor(void)
     gtk_box_pack_start (GTK_BOX (hbox1), osc1_waveform_image, FALSE, TRUE, 0);
 
     osc1_waveform_adj = gtk_adjustment_new (0, 0, 6, 1, 1, 0);
+    if (ui) g_object_set_qdata(G_OBJECT(osc1_waveform_adj), ui_quark, ui);
     voice_widget[XSYNTH_PORT_OSC1_WAVEFORM] = osc1_waveform_adj;
   osc1_waveform_spin = gtk_spin_button_new (GTK_ADJUSTMENT (osc1_waveform_adj), 1, 0);
   gtk_widget_show (osc1_waveform_spin);
@@ -237,11 +242,11 @@ create_patch_editor(void)
   gtk_spin_button_set_snap_to_ticks (GTK_SPIN_BUTTON (osc1_waveform_spin), TRUE);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (osc1_waveform_spin), TRUE);
 
-    create_voice_slider(main_window, XSYNTH_PORT_OSC1_PITCH, osc1_table, 0, 0, "pitch", col1_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_OSC1_PITCH, osc1_table, 0, 0, "pitch", col1_sizegroup);
     GTK_ADJUSTMENT(voice_widget[XSYNTH_PORT_OSC1_PITCH])->lower = -10.0f;
     gtk_adjustment_changed (GTK_ADJUSTMENT(voice_widget[XSYNTH_PORT_OSC1_PITCH]));
 
-    create_voice_slider(main_window, XSYNTH_PORT_OSC1_PULSEWIDTH, osc1_table, 0, 2, "pw/slope", col1_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_OSC1_PULSEWIDTH, osc1_table, 0, 2, "pw/slope", col1_sizegroup);
 
   frame3 = gtk_frame_new ("VCO2");
   gtk_widget_show (frame3);
@@ -271,6 +276,7 @@ create_patch_editor(void)
   gtk_misc_set_alignment (GTK_MISC (label19), 0, 0.5);
 
     osc_sync = gtk_check_button_new ();
+    if (ui) g_object_set_qdata(G_OBJECT(osc_sync), ui_quark, ui);
     voice_widget[XSYNTH_PORT_OSC_SYNC] = (GtkObject *)osc_sync;
   gtk_widget_show (osc_sync);
   gtk_table_attach (GTK_TABLE (osc2_table), osc_sync, 1, 3, 3, 4,
@@ -288,6 +294,7 @@ create_patch_editor(void)
     gtk_box_pack_start (GTK_BOX (hbox2), osc2_waveform_image, FALSE, TRUE, 0);
 
     osc2_waveform_adj = gtk_adjustment_new (0, 0, 6, 1, 1, 0);
+    if (ui) g_object_set_qdata(G_OBJECT(osc2_waveform_adj), ui_quark, ui);
     voice_widget[XSYNTH_PORT_OSC2_WAVEFORM] = osc2_waveform_adj;
   osc2_waveform_spin = gtk_spin_button_new (GTK_ADJUSTMENT (osc2_waveform_adj), 1, 0);
   gtk_widget_show (osc2_waveform_spin);
@@ -297,11 +304,11 @@ create_patch_editor(void)
   gtk_spin_button_set_snap_to_ticks (GTK_SPIN_BUTTON (osc2_waveform_spin), TRUE);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (osc2_waveform_spin), TRUE);
 
-    create_voice_slider(main_window, XSYNTH_PORT_OSC2_PITCH, osc2_table, 0, 0, "pitch", col2_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_OSC2_PITCH, osc2_table, 0, 0, "pitch", col2_sizegroup);
     GTK_ADJUSTMENT(voice_widget[XSYNTH_PORT_OSC2_PITCH])->lower = -10.0f;
     gtk_adjustment_changed (GTK_ADJUSTMENT(voice_widget[XSYNTH_PORT_OSC2_PITCH]));
 
-    create_voice_slider(main_window, XSYNTH_PORT_OSC2_PULSEWIDTH, osc2_table, 0, 2, "pw/slope", col2_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_OSC2_PULSEWIDTH, osc2_table, 0, 2, "pw/slope", col2_sizegroup);
 
   frame4 = gtk_frame_new ("LFO");
   gtk_widget_show (frame4);
@@ -334,6 +341,7 @@ create_patch_editor(void)
     gtk_box_pack_start (GTK_BOX (hbox3), lfo_waveform_image, FALSE, TRUE, 0);
 
     lfo_waveform_adj = gtk_adjustment_new (0, 0, 5, 1, 1, 0);
+    if (ui) g_object_set_qdata(G_OBJECT(lfo_waveform_adj), ui_quark, ui);
     voice_widget[XSYNTH_PORT_LFO_WAVEFORM] = lfo_waveform_adj;
   lfo_waveform_spin = gtk_spin_button_new (GTK_ADJUSTMENT (lfo_waveform_adj), 1, 0);
   gtk_widget_show (lfo_waveform_spin);
@@ -343,11 +351,11 @@ create_patch_editor(void)
   gtk_spin_button_set_snap_to_ticks (GTK_SPIN_BUTTON (lfo_waveform_spin), TRUE);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (lfo_waveform_spin), TRUE);
 
-    create_voice_slider(main_window, XSYNTH_PORT_LFO_FREQUENCY, lfo_table, 0, 0, "frequency", col3_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_LFO_FREQUENCY, lfo_table, 0, 0, "frequency", col3_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_LFO_AMOUNT_O, lfo_table, 0, 2, "pitch mod", col3_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_LFO_AMOUNT_O, lfo_table, 0, 2, "pitch mod", col3_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_LFO_AMOUNT_F, lfo_table, 0, 3, "filter mod", col3_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_LFO_AMOUNT_F, lfo_table, 0, 3, "filter mod", col3_sizegroup);
 
   frame5 = gtk_frame_new ("MIXER");
   gtk_widget_show (frame5);
@@ -362,7 +370,7 @@ create_patch_editor(void)
   gtk_table_set_row_spacings (GTK_TABLE (mixer_table), 1);
   gtk_table_set_col_spacings (GTK_TABLE (mixer_table), 5);
 
-    create_voice_slider(main_window, XSYNTH_PORT_OSC_BALANCE, mixer_table, 0, 0, "balance", col1_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_OSC_BALANCE, mixer_table, 0, 0, "balance", col1_sizegroup);
 
   frame6 = gtk_frame_new ("PORTAMENTO");
   gtk_widget_show (frame6);
@@ -377,7 +385,7 @@ create_patch_editor(void)
   gtk_table_set_row_spacings (GTK_TABLE (port_table), 1);
   gtk_table_set_col_spacings (GTK_TABLE (port_table), 5);
 
-    create_voice_slider(main_window, XSYNTH_PORT_GLIDE_TIME, port_table, 0, 0, "glide time", col2_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_GLIDE_TIME, port_table, 0, 0, "glide time", col2_sizegroup);
 
   frame7 = gtk_frame_new ("EG1 (VCA)");
   gtk_widget_show (frame7);
@@ -392,19 +400,19 @@ create_patch_editor(void)
   gtk_table_set_row_spacings (GTK_TABLE (eg1_table), 1);
   gtk_table_set_col_spacings (GTK_TABLE (eg1_table), 5);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG1_ATTACK_TIME, eg1_table, 0, 0, "attack", col1_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG1_ATTACK_TIME, eg1_table, 0, 0, "attack", col1_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG1_DECAY_TIME, eg1_table, 0, 1, "decay", col1_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG1_DECAY_TIME, eg1_table, 0, 1, "decay", col1_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG1_SUSTAIN_LEVEL, eg1_table, 0, 2, "sustain", col1_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG1_SUSTAIN_LEVEL, eg1_table, 0, 2, "sustain", col1_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG1_RELEASE_TIME, eg1_table, 0, 3, "release", col1_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG1_RELEASE_TIME, eg1_table, 0, 3, "release", col1_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG1_VEL_SENS, eg1_table, 0, 4, "vel sens", col1_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG1_VEL_SENS, eg1_table, 0, 4, "vel sens", col1_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG1_AMOUNT_O, eg1_table, 0, 5, "pitch mod", col1_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG1_AMOUNT_O, eg1_table, 0, 5, "pitch mod", col1_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG1_AMOUNT_F, eg1_table, 0, 6, "filter mod", col1_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG1_AMOUNT_F, eg1_table, 0, 6, "filter mod", col1_sizegroup);
 
   frame8 = gtk_frame_new ("EG2");
   gtk_widget_show (frame8);
@@ -419,19 +427,19 @@ create_patch_editor(void)
   gtk_table_set_row_spacings (GTK_TABLE (eg2_table), 1);
   gtk_table_set_col_spacings (GTK_TABLE (eg2_table), 5);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG2_ATTACK_TIME, eg2_table, 0, 0, "attack", col2_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG2_ATTACK_TIME, eg2_table, 0, 0, "attack", col2_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG2_DECAY_TIME, eg2_table, 0, 1, "decay", col2_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG2_DECAY_TIME, eg2_table, 0, 1, "decay", col2_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG2_SUSTAIN_LEVEL, eg2_table, 0, 2, "sustain", col2_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG2_SUSTAIN_LEVEL, eg2_table, 0, 2, "sustain", col2_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG2_RELEASE_TIME, eg2_table, 0, 3, "release", col2_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG2_RELEASE_TIME, eg2_table, 0, 3, "release", col2_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG2_VEL_SENS, eg2_table, 0, 4, "vel sens", col2_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG2_VEL_SENS, eg2_table, 0, 4, "vel sens", col2_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG2_AMOUNT_O, eg2_table, 0, 5, "pitch mod", col2_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG2_AMOUNT_O, eg2_table, 0, 5, "pitch mod", col2_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_EG2_AMOUNT_F, eg2_table, 0, 6, "filter mod", col2_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_EG2_AMOUNT_F, eg2_table, 0, 6, "filter mod", col2_sizegroup);
 
   frame9 = gtk_frame_new ("VCF");
   gtk_widget_show (frame9);
@@ -461,19 +469,22 @@ create_patch_editor(void)
                       (GtkAttachOptions) (0), 0, 0);
     vcf_mode_menu = gtk_menu_new ();
     vcf_mode_2pole = gtk_menu_item_new_with_label ("12 db/oct");
+    if (ui) g_object_set_qdata(G_OBJECT(vcf_mode_2pole), ui_quark, ui);
     gtk_widget_show (vcf_mode_2pole);
     gtk_menu_append (GTK_MENU (vcf_mode_menu), vcf_mode_2pole);
     vcf_mode_4pole = gtk_menu_item_new_with_label ("24 db/oct");
+    if (ui) g_object_set_qdata(G_OBJECT(vcf_mode_4pole), ui_quark, ui);
     gtk_widget_show (vcf_mode_4pole);
     gtk_menu_append (GTK_MENU (vcf_mode_menu), vcf_mode_4pole);
     vcf_mode_mvclpf = gtk_menu_item_new_with_label ("MCVLPF-3");
+    if (ui) g_object_set_qdata(G_OBJECT(vcf_mode_mvclpf), ui_quark, ui);
     gtk_widget_show (vcf_mode_mvclpf);
     gtk_menu_append (GTK_MENU (vcf_mode_menu), vcf_mode_mvclpf);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (vcf_mode_option_menu), vcf_mode_menu);
 
-    create_voice_slider(main_window, XSYNTH_PORT_VCF_CUTOFF, vcf_table, 0, 0, "cutoff", col3_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_VCF_CUTOFF, vcf_table, 0, 0, "cutoff", col3_sizegroup);
 
-    create_voice_slider(main_window, XSYNTH_PORT_VCF_QRES, vcf_table, 0, 1, "resonance", col3_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_VCF_QRES, vcf_table, 0, 1, "resonance", col3_sizegroup);
 
   frame10 = gtk_frame_new ("VOLUME");
   gtk_widget_show (frame10);
@@ -488,7 +499,7 @@ create_patch_editor(void)
   gtk_table_set_row_spacings (GTK_TABLE (volume_table), 1);
   gtk_table_set_col_spacings (GTK_TABLE (volume_table), 5);
 
-    create_voice_slider(main_window, XSYNTH_PORT_VOLUME, volume_table, 0, 0, "volume", col3_sizegroup);
+    create_voice_slider(ui, XSYNTH_PORT_VOLUME, volume_table, 0, 0, "volume", col3_sizegroup);
 
     /* connect patch edit widgets */
     gtk_signal_connect (GTK_OBJECT (voice_widget[XSYNTH_PORT_OSC1_PITCH]),
@@ -803,7 +814,7 @@ create_main_window (const char *tag)
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), patches_tab_label);
 
     /* Patch Edit tab */
-    patch_edit_table = create_patch_editor();
+    patch_edit_table = create_patch_editor(NULL);
   gtk_widget_show (patch_edit_table);
   gtk_container_add (GTK_CONTAINER (notebook1), patch_edit_table);
 

@@ -421,7 +421,6 @@ instantiate(const LV2UI_Descriptor *descriptor,
             LV2UI_Widget *widget,
             const LV2_Feature *const *features)
 {
-    // !FIX! save write_function, controller, (what else?)
     int i;
     LV2_URID_Map *map = NULL;
     xsynth_ui_t *ui;
@@ -439,9 +438,14 @@ instantiate(const LV2UI_Descriptor *descriptor,
     ui = (xsynth_ui_t *)calloc(1, sizeof(xsynth_ui_t));
     if (!ui) return NULL;
 
+    ui->controller = controller;
+    ui->write_function = write_function;
+
     // uris->atom_Float = map->map(map->handle, LV2_ATOM__Float);
 
-    patch_edit_table = create_patch_editor();
+    ui_quark = g_quark_from_string ("xsynth_lv2_ui");
+
+    patch_edit_table = create_patch_editor(ui);
     logo_image = create_logo_image();
     gtk_widget_show (logo_image);
     gtk_table_attach (GTK_TABLE (patch_edit_table), logo_image, 2, 3, 3, 4,

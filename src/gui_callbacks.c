@@ -350,6 +350,7 @@ on_voice_slider_change( GtkWidget *widget, gpointer data )
     struct xsynth_port_descriptor *xpd = &xsynth_port_description[index];
     float cval = GTK_ADJUSTMENT(widget)->value / 10.0f;
     float value;
+    xsynth_ui_t *ui = g_object_get_qdata(G_OBJECT(widget), ui_quark);
 
     if (internal_gui_update_only) {
         /* GDB_MESSAGE(GDB_GUI, " on_voice_slider_change: skipping further action\n"); */
@@ -369,7 +370,7 @@ on_voice_slider_change( GtkWidget *widget, gpointer data )
     GDB_MESSAGE(GDB_GUI, " on_voice_slider_change: slider %d changed to %10.6f => %10.6f\n",
             index, GTK_ADJUSTMENT(widget)->value, value);
 
-    // lo_send(osc_host_address, osc_control_path, "if", index, value);
+    ui->write_function(ui->controller, index, sizeof(float), 0, &value);
 }
 
 void
@@ -377,6 +378,8 @@ on_voice_detent_change( GtkWidget *widget, gpointer data )
 {
     int index = (int)data;
     int value = lrintf(GTK_ADJUSTMENT(widget)->value);
+    xsynth_ui_t *ui = g_object_get_qdata(G_OBJECT(widget), ui_quark);
+    float f;
 
     update_detent_label(index, value);
 
@@ -388,7 +391,8 @@ on_voice_detent_change( GtkWidget *widget, gpointer data )
     GDB_MESSAGE(GDB_GUI, " on_voice_detent_change: detent %d changed to %d\n",
             index, value);
 
-    lo_send(osc_host_address, osc_control_path, "if", index, (float)value);
+    f = (float)value;
+    ui->write_function(ui->controller, index, sizeof(float), 0, &f);
 }
 
 void
@@ -396,6 +400,8 @@ on_voice_onoff_toggled( GtkWidget *widget, gpointer data )
 {
     int index = (int)data;
     int state = GTK_TOGGLE_BUTTON (widget)->active;
+    xsynth_ui_t *ui = g_object_get_qdata(G_OBJECT(widget), ui_quark);
+    float f;
 
     if (internal_gui_update_only) {
         /* GDB_MESSAGE(GDB_GUI, " on_voice_onoff_toggled: skipping further action\n"); */
@@ -405,17 +411,21 @@ on_voice_onoff_toggled( GtkWidget *widget, gpointer data )
     GDB_MESSAGE(GDB_GUI, " on_voice_onoff_toggled: button %d changed to %s\n",
                 index, (state ? "on" : "off"));
 
-    lo_send(osc_host_address, osc_control_path, "if", index, (state ? 1.0f : 0.0f));
+    f = (state ? 1.0f : 0.0f);
+    ui->write_function(ui->controller, index, sizeof(float), 0, &f);
 }
 
 void
 on_vcf_mode_activate(GtkWidget *widget, gpointer data)
 {
     unsigned char mode = (unsigned char)(int)data;
+    xsynth_ui_t *ui = g_object_get_qdata(G_OBJECT(widget), ui_quark);
+    float f;
 
     GDB_MESSAGE(GDB_GUI, " on_vcf_mode_activate: vcf mode '%d' selected\n", mode);
 
-    lo_send(osc_host_address, osc_control_path, "if", XSYNTH_PORT_VCF_MODE, (float)mode);
+    f = (float)mode;
+    ui->write_function(ui->controller, XSYNTH_PORT_VCF_MODE, sizeof(float), 0, &f);
 #if !GTK_CHECK_VERSION(2, 0, 0)
     vcf_mode = mode;
 #endif

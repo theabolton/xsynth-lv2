@@ -50,6 +50,7 @@ extern char           *project_directory;
 typedef struct _xsynth_ui_t xsynth_ui_t;
 
 struct _xsynth_ui_t {
+    LV2UI_Controller controller;
     LV2UI_Write_Function write_function;
 };
 
